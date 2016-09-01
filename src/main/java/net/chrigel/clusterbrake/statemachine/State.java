@@ -1,28 +1,20 @@
 package net.chrigel.clusterbrake.statemachine;
 
 /**
- * Represents a state.
+ * Represents a state. The state must not (de)activate by itself, it must be activated using enter/exit methods from
+ * outside. If a state should deactivate, consider an EventListener Model where the outsiders can register and listen
+ * for events.
  */
 public interface State {
 
     /**
-     * Binds another state to a trigger. If the trigger activates, then the passed state will be transitioned to.
-     *
-     * @param state the state.
-     * @param trigger the trigger class.
-     * @throws IllegalStateException if trigger is already bound.
-     */
-    void bindStateToTrigger(State state, Class<? extends Trigger> trigger);
-
-    /**
-     * Enters the state. This method needs to return as soon as the state has entered. The state must remain active. The
-     * state must not, under any circumstances, activate by itself.
+     * Enters the state. This method needs to return as soon as the state has entered. The state must remain active,
+     * even when the method returns.
      */
     void enter();
 
     /**
-     * Exits the state. The Implementation must stop all activities related to the state. The state must not, under any
-     * circumstances, deactivate by itself.
+     * Exits the state. The Implementation must stop all activities related to the state.
      */
     void exit();
 

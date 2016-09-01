@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
+import net.chrigel.clusterbrake.media.impl.MediaModule;
 import net.chrigel.clusterbrake.settings.PropertiesModule;
 import net.chrigel.clusterbrake.settings.impl.SettingsModule;
 import net.chrigel.clusterbrake.statemachine.StateContext;
@@ -40,15 +41,17 @@ public class Startup {
 
         File configDir = new File(nodeConfig.getProperty("dir.config").toString());
         File commonConfigFile = new File(configDir, nodeConfig.getProperty("properties.common.path").toString());
+        File workflowConfigFile = new File(configDir, nodeConfig.getProperty("properties.workflow.path").toString());
 
         logger.debug("Creating guice modules...");
         List<Module> modules = new LinkedList<>();
 
         modules.add(new PropertiesModule(configFileName));
         modules.add(new PropertiesModule(commonConfigFile.getPath()));
+        modules.add(new PropertiesModule(workflowConfigFile.getPath()));
         modules.add(new TranscoderModule());
         modules.add(new SettingsModule());
-
+        modules.add(new MediaModule());
         modules.add(getWorkflowModule(loadWorkflowConfiguration(nodeConfig, configDir)));
 
         logger.info("Booting application...");
@@ -83,7 +86,8 @@ public class Startup {
         }
     }
 
-    private static Configuration loadNodeConfiguration(String configFileName) throws IOException, ConfigurationException {
+    private static Configuration loadNodeConfiguration(String configFileName)
+            throws IOException, ConfigurationException {
         logger.info("Loading configuration file: {}", configFileName);
         Configuration nodeConfig = new Configuration();
         nodeConfig.load(configFileName);
@@ -96,7 +100,7 @@ public class Startup {
     private static Configuration loadWorkflowConfiguration(Configuration nodeConfiguration, File configDir)
             throws ConfigurationException, IOException {
 
-        File configFile = new File(configDir, 
+        File configFile = new File(configDir,
                 nodeConfiguration.getProperty("properties.workflow.path").toString());
         String configFileName = configFile.getPath();
         logger.info("Loading configuration file: {}", configFileName);

@@ -1,4 +1,4 @@
-package net.chrigel.clusterbrake.settings.impl;
+package net.chrigel.clusterbrake.workflow.manualauto.settings;
 
 import com.google.inject.Inject;
 import com.google.inject.name.Named;

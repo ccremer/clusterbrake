@@ -1,4 +1,4 @@
-package net.chrigel.clusterbrake.workflow.manualauto;
+package net.chrigel.clusterbrake.statemachine.states;
 
 import com.google.inject.Inject;
 import java.util.concurrent.Executors;

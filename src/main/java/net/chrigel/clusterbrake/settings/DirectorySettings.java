@@ -10,4 +10,6 @@ public interface DirectorySettings {
     File getInputBaseDir();
 
     File getOutputBaseDir();
+
+    File getConfigBaseDir();
 }
