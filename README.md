@@ -50,7 +50,7 @@ but it needs a different format than usual.
 
 ### What is "Automatic Transcoding"
 If you have a software like Couchpotato which downloads movies and puts them in a output folder, you can pick them up and do some post processing after download.
-If you are concerned about file size or unified codec use in your library, use this.
+If you are concerned about file size or unified codec use in your library, use this. However, automatic transcoding might no yield the result you expected from a particular movie. So to correct this, there is manual transcoding mode.
 
 ### Why not ffmpeg?
 So far as I'm aware, ffmpeg does not support x265 which reduces file size in half but uses more CPU power. 
