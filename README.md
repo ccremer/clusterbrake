@@ -16,10 +16,6 @@ then this might be for you.
 It picks video files from a watch folder and transcodes them into a new format based on a template. Transcoding does not happen with 
 this software, but instead relies on a 3rd party software like handbrake. ffmpeg would probably work too.
 
-### Why not ffmpeg?
-So far as I'm aware, ffmpeg does not support x265 which reduces file size in half but uses more CPU power. 
-Encoding in x265 takes forever, but if I can do that unattended and automatically, I don't really care about time anymore.
-
 
 # Features planned
 * Watch folder for automatic encoding. All files will have a unified output format
@@ -33,14 +29,7 @@ Encoding in x265 takes forever, but if I can do that unattended and automaticall
   * Time-Window: E.g. Only transcode during the night
   * File size: If a video is very big, a Raspberry Pi might take a very long time. Leave the job for another server with more processing power.
 
-## What is "Manual Transcoding"
-If you have a file that needs transcoding with different properties than the default template (e.g. dual audio track, multiple subtitles, ...) 
-then you can provide a custom template which has all the options defined for that video file. Maybe you have a movie that you want to put on your mobile device
-but it needs a different format than usual.
 
-## What is "Automatic Transcoding"
-If you have a software like Couchpotato which downloads movies and puts them in a output folder, you can pick them up and do some post processing after download.
-If you are concerned about file size or unified codec use in your library, use this.
 
 # The Workflow
 * 2 Input folders: Auto and Manual. Auto is for automatic encoding, the other is for manually provided video files. Manually created jobs are prioritized, but won't
@@ -51,3 +40,21 @@ If you are concerned about file size or unified codec use in your library, use t
 * Get the next video.
 
 I'll provide some sort of flowchart sometime in the future. This project is not usable yet...
+
+# FAQ
+
+### What is "Manual Transcoding"
+If you have a file that needs transcoding with different properties than the default template (e.g. dual audio track, multiple subtitles, ...) 
+then you can provide a custom template which has all the options defined for that video file. Maybe you have a movie that you want to put on your mobile device
+but it needs a different format than usual.
+
+### What is "Automatic Transcoding"
+If you have a software like Couchpotato which downloads movies and puts them in a output folder, you can pick them up and do some post processing after download.
+If you are concerned about file size or unified codec use in your library, use this.
+
+### Why not ffmpeg?
+So far as I'm aware, ffmpeg does not support x265 which reduces file size in half but uses more CPU power. 
+Encoding in x265 takes forever, but if I can do that unattended and automatically, I don't really care about time anymore.
+
+### Why Java and not some script language like Bash?
+I'm faster at coding in Java than bash. Simple as that.
