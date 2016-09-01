@@ -58,3 +58,9 @@ Encoding in x265 takes forever, but if I can do that unattended and automaticall
 
 ### Why Java and not some script language like Bash?
 I'm faster at coding in Java than bash. Simple as that.
+
+### You speak of cluster. Do I need 3 Nodes to form a quorum?
+No, you can run it on a single node. I keep things rather simple. If you use multiple nodes however, you need to provide some sort of common storage where every node writes to the same data volume.
+
+### I have a different workflow!
+Fine! Fork the project and have a look at the statemachine package. I think I found some sort of configurable workflow even if it needs re-compiling.
