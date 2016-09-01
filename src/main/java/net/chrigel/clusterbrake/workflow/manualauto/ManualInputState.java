@@ -1,13 +1,14 @@
-package net.chrigel.clusterbrake.statemachine.states;
+package net.chrigel.clusterbrake.workflow.manualauto;
 
 import com.google.inject.Inject;
 import net.chrigel.clusterbrake.settings.InputSettings;
 import net.chrigel.clusterbrake.statemachine.StateContext;
+import net.chrigel.clusterbrake.statemachine.states.AbstractState;
 
 /**
  *
  */
-class ManualInputState
+public class ManualInputState
         extends AbstractState {
 
     private final InputSettings inputSettings;

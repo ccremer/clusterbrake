@@ -15,7 +15,7 @@ public class SchedulerSettingsImpl
 
     @Inject
     SchedulerSettingsImpl(
-            @Named("stage.scheduler.interval") long delay
+            @Named("workflow.scheduler.interval") long delay
     ) {
         this.delay = delay;
     }

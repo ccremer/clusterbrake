@@ -1,4 +1,4 @@
-package net.chrigel.clusterbrake.settings;
+package net.chrigel.clusterbrake.settings.constraint;
 
 import net.chrigel.clusterbrake.media.Video;
 

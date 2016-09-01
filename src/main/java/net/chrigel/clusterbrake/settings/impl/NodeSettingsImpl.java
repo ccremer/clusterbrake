@@ -11,18 +11,12 @@ public class NodeSettingsImpl
         implements NodeSettings {
 
     private String nodeID;
-    private final long maxFileSizeContraint;
-    private final long minFileSizeContraint;
 
     @Inject
     NodeSettingsImpl(
-            @Named("node.id") String nodeID,
-            @Named("node.constraint.maxFileSize") long maxFileSizeContraint,
-            @Named("node.constraint.minFileSize") long minFileSizeContraint
+            @Named("node.id") String nodeID
     ) {
         this.nodeID = nodeID;
-        this.maxFileSizeContraint = maxFileSizeContraint;
-        this.minFileSizeContraint = minFileSizeContraint;
     }
 
     @Override
@@ -33,16 +27,6 @@ public class NodeSettingsImpl
     @Override
     public void setNodeID(String id) {
         this.nodeID = id;
-    }
-
-    @Override
-    public long getMaxFileSize() {
-        return maxFileSizeContraint;
-    }
-
-    @Override
-    public long getMinFileSize() {
-        return minFileSizeContraint;
     }
 
 }

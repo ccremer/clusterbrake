@@ -1,16 +1,17 @@
-package net.chrigel.clusterbrake.statemachine.states;
+package net.chrigel.clusterbrake.workflow.manualauto;
 
 import com.google.inject.Inject;
 import net.chrigel.clusterbrake.statemachine.StateContext;
+import net.chrigel.clusterbrake.statemachine.states.AbstractState;
 
 /**
  *
  */
-class CleanupState
+public class CleanupState
         extends AbstractState {
 
     @Inject
-    public CleanupState(StateContext context) {
+    CleanupState(StateContext context) {
         super(context);
     }
 

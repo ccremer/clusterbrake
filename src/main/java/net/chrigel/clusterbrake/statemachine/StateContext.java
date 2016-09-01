@@ -7,6 +7,6 @@ public interface StateContext {
 
     void setState(State state);
 
-    State getState();
+    State getStartupState();
 
 }

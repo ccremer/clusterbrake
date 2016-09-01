@@ -9,7 +9,4 @@ public interface NodeSettings {
 
     void setNodeID(String id);
 
-    long getMaxFileSize();
-
-    long getMinFileSize();
 }

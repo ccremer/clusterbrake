@@ -12,7 +12,7 @@ import net.chrigel.clusterbrake.statemachine.Trigger;
 /**
  * Provides a base class for states.
  */
-abstract class AbstractState
+public abstract class AbstractState
         implements State {
 
     private final AtomicBoolean isActive;
@@ -20,7 +20,7 @@ abstract class AbstractState
     protected final Logger logger;
     private final Map<Class<? extends Trigger>, State> conditionalMap;
 
-    protected AbstractState(StateContext context) {
+    public AbstractState(StateContext context) {
         this.logger = LogManager.getLogger(getClass());
         this.isActive = new AtomicBoolean();
         this.context = context;
@@ -42,7 +42,7 @@ abstract class AbstractState
     public final void enter() {
         isActive.set(true);
         enterState();
-        logger.info("Entered {}.", this);
+        logger.debug("Entered {}.", this);
     }
 
     @Override
@@ -51,7 +51,7 @@ abstract class AbstractState
         isActive.set(false);
         logger.debug("Exited {}.", this);
     }
-
+    
     /**
      * This method is meant to be overriden and is basically identical to {@link State#exit()}, except that after this
      * method, a log statement will be made and the state will be marked inactive (no need to log something like "exited

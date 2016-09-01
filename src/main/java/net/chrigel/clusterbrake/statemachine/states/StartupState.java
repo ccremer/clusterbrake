@@ -8,13 +8,13 @@ import net.chrigel.clusterbrake.settings.DirectorySettings;
 /**
  *
  */
-class InitialState
+public class StartupState
         extends AbstractState {
 
     private final DirectorySettings settings;
 
     @Inject
-    InitialState(StateContext context, DirectorySettings settings) {
+    public StartupState(StateContext context, DirectorySettings settings) {
         super(context);
         this.settings = settings;
     }
@@ -22,17 +22,14 @@ class InitialState
     @Override
     protected void enterState() {
 
-        logger.info("Creating base dirs...");
-        settings.getManualInputBaseDir().mkdirs();
-        settings.getAutomaticInputBaseDir().mkdirs();
-        settings.getCustomPresetDir().mkdirs();
-
-        settings.getStageManualDir().mkdirs();
-        settings.getStageAutomaticDir().mkdirs();
-        settings.getStageQueueDir().mkdirs();
-        settings.getStageCurrentDir().mkdirs();
-        settings.getStageFinishedDir().mkdirs();
-
+        logger.debug("Checking if base dirs exist...");
+        if (!settings.getInputBaseDir().exists()) {
+            logger.error("Input directory does not exist!");
+        }
+        if (!settings.getOutputBaseDir().exists()) {
+            logger.error("Output directory does not exist!");
+        }
+        
         fireStateTrigger(new InitializedStateTrigger());
     }
 

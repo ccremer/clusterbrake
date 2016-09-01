@@ -1,4 +1,4 @@
-package net.chrigel.clusterbrake.statemachine.states;
+package net.chrigel.clusterbrake.workflow.manualauto;
 
 import com.google.inject.Inject;
 import java.util.concurrent.Executors;
@@ -7,11 +7,12 @@ import java.util.concurrent.TimeUnit;
 import net.chrigel.clusterbrake.settings.SchedulerSettings;
 import net.chrigel.clusterbrake.statemachine.StateContext;
 import net.chrigel.clusterbrake.statemachine.trigger.ScheduledActionTrigger;
+import net.chrigel.clusterbrake.statemachine.states.AbstractState;
 
 /**
  *
  */
-class SchedulerState
+public class SchedulerState
         extends AbstractState {
 
     private ScheduledExecutorService executor;
@@ -19,7 +20,7 @@ class SchedulerState
     private Runnable task;
 
     @Inject
-    SchedulerState(StateContext context) {
+    public SchedulerState(StateContext context) {
         super(context);
     }
 
@@ -30,7 +31,12 @@ class SchedulerState
     public final void setSettings(SchedulerSettings settings) {
         this.settings = settings;
     }
-    
+
+    public final void stopScheduler() {
+        this.shutdownExecutor();
+        fireStateTrigger(new ScheduledActionTrigger());
+    }
+
     @Override
     protected void enterState() {
         this.executor = Executors.newSingleThreadScheduledExecutor();
@@ -48,12 +54,16 @@ class SchedulerState
     @Override
     protected void exitState() {
         if (isActive()) {
-            try {
-                this.executor.shutdownNow();
-                this.executor.awaitTermination(30, TimeUnit.SECONDS);
-            } catch (InterruptedException ex) {
-                logger.warn("Waiting for scheduler shutdown timed out: {}", ex);
-            }
+            shutdownExecutor();
+        }
+    }
+
+    private void shutdownExecutor() {
+        try {
+            this.executor.shutdownNow();
+            this.executor.awaitTermination(30, TimeUnit.SECONDS);
+        } catch (InterruptedException ex) {
+            logger.warn("Waiting for scheduler shutdown timed out: {}", ex);
         }
     }
 

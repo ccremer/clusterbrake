@@ -74,7 +74,9 @@
                         <configuration>
                             <tasks>
                                 <mkdir dir="${project.build.directory}" />
-                                <copy file="${basedir}/src/main/resources/clusterbrake.properties" tofile="${project.build.directory}/clusterbrake.properties" />
+                                <copy file="${basedir}/src/main/resources/clusterbrake.node.properties" tofile="${project.build.directory}/clusterbrake.properties" />
+                                <copy file="${basedir}/src/main/resources/clusterbrake.common.properties" tofile="${project.build.directory}/config/common.properties" />
+                                <copy file="${basedir}/src/main/resources/clusterbrake.workflow.properties" tofile="${project.build.directory}/config/common.workflow.properties" />
                             </tasks>
                         </configuration>
                     </execution>

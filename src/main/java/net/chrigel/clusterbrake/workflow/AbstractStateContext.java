@@ -1,43 +1,26 @@
-package net.chrigel.clusterbrake.statemachine.states;
+package net.chrigel.clusterbrake.workflow;
 
-import com.google.inject.Inject;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import net.chrigel.clusterbrake.settings.SchedulerSettings;
 import net.chrigel.clusterbrake.statemachine.State;
 import net.chrigel.clusterbrake.statemachine.StateContext;
-import net.chrigel.clusterbrake.statemachine.trigger.InitializedStateTrigger;
-import net.chrigel.clusterbrake.statemachine.trigger.TranscodingFinishedTrigger;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 /**
  *
  */
-class ClusterContext
+public abstract class AbstractStateContext
         implements StateContext {
 
+    private State initialState;
     private State currentState;
     private final ExecutorService executor;
     private final Logger logger;
 
-    @Inject
-    ClusterContext(
-            InitialState initialState,
-            ManualInputState manualInputState,
-            TranscodingState transcodingState,
-            CleanupState cleanupState,
-            SchedulerState schedulerState,
-            SchedulerSettings schedulerSettings
-    ) {
+    protected AbstractStateContext() {
         this.logger = LogManager.getLogger(getClass());
         this.executor = Executors.newSingleThreadExecutor();
-
-        initialState.bindStateToTrigger(manualInputState, InitializedStateTrigger.class);
-        schedulerState.setSettings(schedulerSettings);
-        transcodingState.bindStateToTrigger(cleanupState, TranscodingFinishedTrigger.class);
-
-        setState(initialState);
     }
 
     @Override
@@ -56,8 +39,12 @@ class ClusterContext
     }
 
     @Override
-    public final State getState() {
-        return currentState;
+    public final State getStartupState() {
+        return initialState;
+    }
+
+    protected final void setStartupState(State state) {
+        this.initialState = state;
     }
 
 }

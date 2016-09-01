@@ -19,7 +19,7 @@ public class TranscodingState
     private Transcoder currentTranscoder;
 
     @Inject
-    TranscodingState(
+    public TranscodingState(
             StateContext context,
             Provider<VideoPackage> videoContextProvider,
             Provider<Transcoder> transcoderProvider

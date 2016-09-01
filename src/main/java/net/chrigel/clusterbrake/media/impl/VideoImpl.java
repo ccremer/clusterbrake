@@ -2,7 +2,6 @@ package net.chrigel.clusterbrake.media.impl;
 
 import com.google.inject.Inject;
 import java.io.File;
-import java.util.List;
 import net.chrigel.clusterbrake.media.Video;
 import net.chrigel.clusterbrake.settings.InputSettings;
 
@@ -22,11 +21,6 @@ public class VideoImpl
     
     @Override
     public File getSourceFile() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public List<File> getSupplementalFiles() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
