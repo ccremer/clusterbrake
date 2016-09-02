@@ -10,8 +10,8 @@ public interface VideoPackage {
     Video getVideo();
 
     File getConfigFile();
-    
+
     File getOutputFile();
-    
+
     VideoOptionPackage getSettings();
 }

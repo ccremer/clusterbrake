@@ -3,26 +3,28 @@ package net.chrigel.clusterbrake.workflow.manualauto;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import java.io.IOException;
-import net.chrigel.clusterbrake.media.VideoScanner;
 import net.chrigel.clusterbrake.workflow.manualauto.settings.InputSettings;
 import net.chrigel.clusterbrake.statemachine.StateContext;
 import net.chrigel.clusterbrake.statemachine.states.AbstractState;
 import net.chrigel.clusterbrake.statemachine.trigger.ErrorTrigger;
+import net.chrigel.clusterbrake.statemachine.trigger.ListResultTrigger;
+import net.chrigel.clusterbrake.media.FileScanner;
+import net.chrigel.clusterbrake.media.Video;
 
 /**
  *
  */
-public class ManualInputState
+public class ScanManualInputDirState
         extends AbstractState {
 
     private final InputSettings inputSettings;
-    private final Provider<VideoScanner> videoScannerProvider;
+    private final Provider<FileScanner<Video>> videoScannerProvider;
 
     @Inject
-    ManualInputState(
+    ScanManualInputDirState(
             StateContext context,
             InputSettings inputSettings,
-            Provider<VideoScanner> videoScannerProvider
+            Provider<FileScanner<Video>> videoScannerProvider
     ) {
         super(context);
         this.inputSettings = inputSettings;
@@ -32,10 +34,11 @@ public class ManualInputState
     @Override
     protected void enterState() {
         try {
-            videoScannerProvider.get()
-                    .searchIn(inputSettings.getManualInputDirectory())
+            fireStateTrigger(new ListResultTrigger(
+                    videoScannerProvider.get()
+                    .search(inputSettings.getManualInputDirectory())
                     .withFileExtensionFilter(inputSettings.getVideoExtensions())
-                    .scan();
+                    .scan()));
         } catch (IOException ex) {
             logger.error(ex);
             fireStateTrigger(new ErrorTrigger());

@@ -14,30 +14,30 @@ import net.chrigel.clusterbrake.transcode.Transcoder;
 public class TranscodingState
         extends AbstractState {
 
-    private final Provider<VideoPackage> videoPackageProvider;
     private final Provider<Transcoder> transcoderProvider;
     private Transcoder currentTranscoder;
+    private VideoPackage videoPackage;
 
     @Inject
     public TranscodingState(
             StateContext context,
-            Provider<VideoPackage> videoContextProvider,
             Provider<Transcoder> transcoderProvider
     ) {
         super(context);
-        this.videoPackageProvider = videoContextProvider;
         this.transcoderProvider = transcoderProvider;
     }
 
+    public void setVideoPackage(VideoPackage videoPackage) {
+        this.videoPackage = videoPackage;
+    }
+    
     @Override
     protected void enterState() {
         try {
-            VideoPackage container = videoPackageProvider.get();
-
             int returnValue = transcoderProvider.get()
-                    .from(container.getVideo().getSourceFile())
-                    .to(container.getOutputFile())
-                    .withOptions(container.getSettings().getOptions())
+                    .from(videoPackage.getVideo().getSourceFile())
+                    .to(videoPackage.getOutputFile())
+                    .withOptions(videoPackage.getSettings().getOptions())
                     .transcode();
 
             if (returnValue == 0) {

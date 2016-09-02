@@ -39,8 +39,8 @@ public abstract class AbstractStateContext
     }
 
     @Override
-    public final State getStartupState() {
-        return initialState;
+    public final void reset() {
+        setState(initialState);
     }
 
     protected final void setStartupState(State state) {

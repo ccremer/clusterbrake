@@ -36,8 +36,8 @@ public abstract class AbstractState
      * @param trigger the trigger class.
      * @throws IllegalStateException if trigger is already bound.
      */
-    public final <T extends Trigger> void bindStateToTrigger(State state, Class<T> trigger) {
-        bindStateToTrigger(state, trigger, null);
+    public final <T extends Trigger> void bindNextStateToTrigger(State state, Class<T> trigger) {
+        AbstractState.this.bindNextStateToTrigger(state, trigger, null);
     }
 
     /**
@@ -50,7 +50,7 @@ public abstract class AbstractState
      * before exiting state and entering next state.
      * @throws IllegalStateException if trigger is already bound.
      */
-    public final <T extends Trigger> void bindStateToTrigger(
+    public final <T extends Trigger> void bindNextStateToTrigger(
             State state, Class<T> trigger, Callback<T, Void> callback) {
         synchronized (conditionalMap) {
             if (conditionalMap.containsKey(trigger)) {
