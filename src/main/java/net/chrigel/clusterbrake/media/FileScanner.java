@@ -12,7 +12,7 @@ public interface FileScanner<T> {
 
     FileScanner<T> search(File dirOrFile);
 
-    FileScanner<T> recursive(boolean recursive);
+    FileScanner<T> withRecursion(boolean recursive);
 
     FileScanner<T> withFileExtensionFilter(List<String> allowedExtensions);
 

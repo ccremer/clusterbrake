@@ -6,7 +6,6 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import net.chrigel.clusterbrake.media.FileScanner;
-import net.chrigel.clusterbrake.media.VideoOptionPackage;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 
@@ -32,7 +31,7 @@ public abstract class AbstractFileScanner<T>
     }
 
     @Override
-    public FileScanner<T> recursive(boolean recursive) {
+    public FileScanner<T> withRecursion(boolean recursive) {
         this.isRecursive = recursive;
         return this;
     }
@@ -51,6 +50,13 @@ public abstract class AbstractFileScanner<T>
         return allowedExtensions;
     }
 
+    protected Iterator<File> scanForFiles(File searchDir, List<String> allowedExtensions, boolean isRecursive) {
+        return FileUtils.iterateFiles(
+                searchDir,
+                allowedExtensions.toArray(new String[0]),
+                isRecursive);
+    }
+
     protected List<File> scanForSameFilesWithDifferentExtensions(
             File fileWithExtension,
             List<String> extensions)
@@ -62,11 +68,10 @@ public abstract class AbstractFileScanner<T>
             Iterator<String> itr = extensions.iterator();
             while (itr.hasNext()) {
                 String extension = itr.next();
-                File child = new File(String.format("%1$s.%2$s", fileNameWithoutExtension, extension));
-                if (FileUtils.directoryContains(
-                        fileWithExtension.getParentFile(),
-                        child)) {
-                    list.add(new File(fileWithExtension.getParentFile(), child.getName()));
+                String fileName = String.format("%1$s.%2$s", fileNameWithoutExtension, extension);
+                File child = new File(fileWithExtension.getParentFile(), fileName);
+                if (child.exists() && child.isFile()) {
+                    list.add(child);
                 }
             }
         } catch (IllegalArgumentException ex) {

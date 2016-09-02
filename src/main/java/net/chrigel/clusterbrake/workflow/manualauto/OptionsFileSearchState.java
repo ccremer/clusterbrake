@@ -9,6 +9,7 @@ import net.chrigel.clusterbrake.media.VideoOptionPackage;
 import net.chrigel.clusterbrake.settings.DirectorySettings;
 import net.chrigel.clusterbrake.statemachine.StateContext;
 import net.chrigel.clusterbrake.statemachine.states.AbstractState;
+import net.chrigel.clusterbrake.workflow.manualauto.settings.OptionDirVideoPair;
 
 /**
  *
@@ -16,7 +17,7 @@ import net.chrigel.clusterbrake.statemachine.states.AbstractState;
 public class OptionsFileSearchState
         extends AbstractState {
 
-    private List<Video> list;
+    private List<OptionDirVideoPair> list;
     private final DirectorySettings dirSettings;
     private final Provider<FileScanner<VideoOptionPackage>> optionScannerProvider;
 
@@ -30,13 +31,13 @@ public class OptionsFileSearchState
         this.optionScannerProvider = optionScannerProvider;
     }
 
-    public void setVideoList(List<Video> list) {
+    public void setVideoList(List<OptionDirVideoPair> list) {
         this.list = list;
     }
 
     @Override
     protected void enterState() {
-        
+
     }
 
     @Override

@@ -30,8 +30,13 @@ public class ManualAutoWorkflow
             SchedulerSettings schedulerSettings
     ) {
 
+        // startup --> Initialize Workflow
         startupState.bindNextStateToTrigger(initialState, InitializedStateTrigger.class);
+        
+        // WorkflowInit --> Manual Video Scan
         initialState.bindNextStateToTrigger(scanManualInputState, InitializedStateTrigger.class);
+        
+        // manual video scan --> Search for option file
         scanManualInputState.bindNextStateToTrigger(optionsFileSearchState, ListResultTrigger.class, trigger -> {
             optionsFileSearchState.setVideoList(UnsafeCastUtil.cast(trigger.getList()));
             return null;
