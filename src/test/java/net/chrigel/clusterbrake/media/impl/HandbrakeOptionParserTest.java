@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
-import net.chrigel.clusterbrake.media.VideoOptionPackage;
 import org.apache.commons.io.FileUtils;
 import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.hasItem;
@@ -23,8 +22,6 @@ import org.mockito.MockitoAnnotations;
 public class HandbrakeOptionParserTest {
 
     private final HandbrakeOptionParser subject = new HandbrakeOptionParser();
-
-    private VideoOptionPackage optionPackage;
 
     private static final File TEST_BASE_DIR = new File("test");
 
@@ -47,7 +44,6 @@ public class HandbrakeOptionParserTest {
     public void testParseFile_ShouldParseFileCorrectly() throws Exception {
 
         File optionFile = new File(TEST_BASE_DIR, "options.conf");
-        optionPackage = new HandbrakeOptionPackage(optionFile);
 
         List<String> lines = new LinkedList<>();
         lines.add("--encoder x265 ");
@@ -57,9 +53,9 @@ public class HandbrakeOptionParserTest {
 
         FileUtils.writeLines(optionFile, lines);
 
-        VideoOptionPackage optionPack = subject.parseFile(optionPackage);
+        List<String> options = subject.parseFile(optionFile);
 
-        assertThat(optionPack.getOptions(), allOf(
+        assertThat(options, allOf(
                 hasItems("--encoder x265", "--markers", "--gain 4.5"),
                 not(hasItem("# comment"))));
     }

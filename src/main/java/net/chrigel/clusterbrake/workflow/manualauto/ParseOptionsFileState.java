@@ -7,8 +7,8 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.util.LinkedList;
 import java.util.List;
-import net.chrigel.clusterbrake.media.FileScanner;
 import net.chrigel.clusterbrake.media.OptionsFileParser;
+import net.chrigel.clusterbrake.media.Video;
 import net.chrigel.clusterbrake.media.VideoOptionPackage;
 import net.chrigel.clusterbrake.media.VideoPackage;
 import net.chrigel.clusterbrake.settings.TemplateSettings;
@@ -27,7 +27,6 @@ public class ParseOptionsFileState
     private List<OptionDirVideoPair> list;
     private final TemplateSettings templateSettings;
     private final WorkflowTemplateSettings workflowTemplateSettings;
-    private final Provider<FileScanner<VideoOptionPackage>> optionScannerProvider;
     private final Provider<VideoOptionPackage> optionPackageProvider;
     private final Provider<OptionsFileParser> optionParserProvider;
     private final Provider<VideoPackage> videoPackageProvider;
@@ -37,7 +36,6 @@ public class ParseOptionsFileState
             StateContext context,
             TemplateSettings templateSettings,
             WorkflowTemplateSettings workflowTemplateSettings,
-            Provider<FileScanner<VideoOptionPackage>> optionScannerProvider,
             Provider<VideoOptionPackage> optionPackageProvider,
             Provider<OptionsFileParser> optionParserProvider,
             Provider<VideoPackage> videoPackageProvider
@@ -45,7 +43,6 @@ public class ParseOptionsFileState
         super(context);
         this.templateSettings = templateSettings;
         this.workflowTemplateSettings = workflowTemplateSettings;
-        this.optionScannerProvider = optionScannerProvider;
         this.optionPackageProvider = optionPackageProvider;
         this.optionParserProvider = optionParserProvider;
         this.videoPackageProvider = videoPackageProvider;
@@ -68,17 +65,46 @@ public class ParseOptionsFileState
          */
         list.forEach(pair -> {
             try {
-                File template = new File(templateSettings.getTemplateDir(), pair.getOptionDir().getName() + ".conf");
-                if (template.exists()) {
-                    VideoOptionPackage pkg = optionPackageProvider.get();
-                    pkg.setOptionFile(template);
-                    pkg = optionParserProvider.get().parseFile(pkg);
+                if (pair.getOptionDir() == null) {
+                    packageList.addAll(
+                            applyOptionsTemplate(
+                                    workflowTemplateSettings.getDefaultManualTemplate(),
+                                    pair.getVideoList()));
+                } else {
+                    File template = new File(
+                            templateSettings.getTemplateDir(),
+                            pair.getOptionDir().getName() + ".conf");
+                    if (template.exists()) {
+                        packageList.addAll(
+                                applyOptionsTemplate(
+                                        template,
+                                        pair.getVideoList()));
+                    }
                 }
-                
+
             } catch (ParseException | IOException ex) {
                 logger.error("Could not read options: {}", ex);
             }
         });
+    }
+
+    private List<VideoPackage> applyOptionsTemplate(File template, List<Video> videoList)
+            throws IOException, ParseException {
+
+        List<VideoPackage> pkgList = new LinkedList<>();
+        List<String> options = optionParserProvider
+                .get()
+                .parseFile(template);
+        videoList.parallelStream().forEach(video -> {
+            VideoPackage videoPkg = videoPackageProvider.get();
+            VideoOptionPackage optionPkg = optionPackageProvider.get();
+            optionPkg.setOptionFile(template);
+            optionPkg.setOptions(options);
+            videoPkg.setSettings(optionPkg);
+            videoPkg.setVideo(video);
+            pkgList.add(videoPkg);
+        });
+        return pkgList;
     }
 
     @Override
