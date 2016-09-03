@@ -40,6 +40,7 @@ public class ScanManualInputDirState
     protected void enterState() {
         try {
 
+            logger.debug("Looking for input directories in {}", inputSettings.getManualInputDirectory());
             List<File> optionDirs = getOptionDirs(inputSettings.getManualInputDirectory());
 
             List<OptionDirVideoPair> pairList = new LinkedList<>();
@@ -83,6 +84,7 @@ public class ScanManualInputDirState
 
     private List<Video> scanForVideoFiles(
             File baseDir, List<String> allowedExtensions, boolean recursive) throws IOException {
+        logger.info("Scanning for media files: {}", baseDir);
         return videoScannerProvider.get()
                 .search(baseDir)
                 .withRecursion(recursive)

@@ -11,12 +11,14 @@ import net.chrigel.clusterbrake.media.VideoOptionPackage;
 class HandbrakeOptionPackage
         implements VideoOptionPackage {
 
-    private final File source;
-    private List<String> options;
+    private File source;
+    private List<String> options = new LinkedList<>();
+
+    HandbrakeOptionPackage() {
+    }
 
     HandbrakeOptionPackage(File source) {
         this.source = source;
-        this.options = new LinkedList<>();
     }
 
     @Override
@@ -32,6 +34,11 @@ class HandbrakeOptionPackage
     @Override
     public File getOptionFile() {
         return source;
+    }
+
+    @Override
+    public void setOptionFile(File file) {
+        this.source = file;
     }
 
 }

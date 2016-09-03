@@ -9,9 +9,13 @@ public interface VideoPackage {
 
     Video getVideo();
 
-    File getConfigFile();
-
+    void setVideo(Video video);
+    
     File getOutputFile();
 
+    void setOutputFile(File file);
+
     VideoOptionPackage getSettings();
+
+    void setSettings(VideoOptionPackage settings);
 }

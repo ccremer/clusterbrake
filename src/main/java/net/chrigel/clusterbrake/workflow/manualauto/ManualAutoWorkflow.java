@@ -23,8 +23,8 @@ public class ManualAutoWorkflow
             StartupState startupState,
             WorkflowInitialState initialState,
             ScanManualInputDirState scanManualInputState,
-            OptionsFileSearchState optionsFileSearchState,
-       //     TranscodingState transcodingState,
+            ParseOptionsFileState optionsFileSearchState,
+            //     TranscodingState transcodingState,
             CleanupState cleanupState,
             SchedulerState schedulerState,
             SchedulerSettings schedulerSettings
@@ -32,17 +32,17 @@ public class ManualAutoWorkflow
 
         // startup --> Initialize Workflow
         startupState.bindNextStateToTrigger(initialState, InitializedStateTrigger.class);
-        
+
         // WorkflowInit --> Manual Video Scan
         initialState.bindNextStateToTrigger(scanManualInputState, InitializedStateTrigger.class);
-        
+
         // manual video scan --> Search for option file
-        scanManualInputState.bindNextStateToTrigger(optionsFileSearchState, ListResultTrigger.class, trigger -> {
-            optionsFileSearchState.setVideoList(UnsafeCastUtil.cast(trigger.getList()));
+        scanManualInputState.bindNextStateToTrigger(optionsFileSearchState, ListResultTrigger.class, listTrigger -> {
+            optionsFileSearchState.setVideoList(UnsafeCastUtil.cast(listTrigger.getList()));
             return null;
         });
         schedulerState.setSettings(schedulerSettings);
-      //  transcodingState.bindStateToTrigger(cleanupState, TranscodingFinishedTrigger.class);
+        //  transcodingState.bindStateToTrigger(cleanupState, TranscodingFinishedTrigger.class);
 
         setStartupState(startupState);
     }
