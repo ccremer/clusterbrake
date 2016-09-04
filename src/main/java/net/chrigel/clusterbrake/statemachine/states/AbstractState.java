@@ -64,15 +64,15 @@ public abstract class AbstractState
     @Override
     public final void enter() {
         isActive.set(true);
+        logger.debug("Entering {}.", this);
         enterState();
-        logger.debug("Entered {}.", this);
     }
 
     @Override
     public final void exit() {
         exitState();
+        logger.debug("Exiting {}.", this);
         isActive.set(false);
-        logger.debug("Exited {}.", this);
     }
 
     /**

@@ -15,6 +15,7 @@ import net.chrigel.clusterbrake.settings.TemplateSettings;
 import net.chrigel.clusterbrake.statemachine.StateContext;
 import net.chrigel.clusterbrake.statemachine.states.AbstractState;
 import net.chrigel.clusterbrake.statemachine.trigger.ErrorTrigger;
+import net.chrigel.clusterbrake.statemachine.trigger.ListResultTrigger;
 import net.chrigel.clusterbrake.workflow.manualauto.settings.OptionDirVideoPair;
 import net.chrigel.clusterbrake.workflow.manualauto.settings.WorkflowTemplateSettings;
 
@@ -79,6 +80,11 @@ public class ParseOptionsFileState
                                 applyOptionsTemplate(
                                         template,
                                         pair.getVideoList()));
+                    } else {
+                        packageList.addAll(
+                            applyOptionsTemplate(
+                                    workflowTemplateSettings.getDefaultManualTemplate(),
+                                    pair.getVideoList()));
                     }
                 }
 
@@ -86,6 +92,7 @@ public class ParseOptionsFileState
                 logger.error("Could not read options: {}", ex);
             }
         });
+        fireStateTrigger(new ListResultTrigger(packageList));
     }
 
     private List<VideoPackage> applyOptionsTemplate(File template, List<Video> videoList)
