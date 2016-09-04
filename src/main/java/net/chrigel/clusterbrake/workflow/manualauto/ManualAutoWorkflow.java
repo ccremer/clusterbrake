@@ -3,6 +3,8 @@ package net.chrigel.clusterbrake.workflow.manualauto;
 import com.google.inject.Inject;
 import net.chrigel.clusterbrake.media.Video;
 import net.chrigel.clusterbrake.settings.SchedulerSettings;
+import net.chrigel.clusterbrake.settings.constraint.FileSizeConstraint;
+import net.chrigel.clusterbrake.settings.constraint.TimeConstraint;
 import net.chrigel.clusterbrake.statemachine.states.SchedulerState;
 import net.chrigel.clusterbrake.statemachine.states.StartupState;
 import net.chrigel.clusterbrake.statemachine.states.TranscodingState;
@@ -23,11 +25,14 @@ public class ManualAutoWorkflow
             StartupState startupState,
             WorkflowInitialState initialState,
             ScanManualInputDirState scanManualInputState,
-            ParseOptionsFileState optionsFileSearchState,
+            ParseOptionsFileState parseOptionsState,
+            QueueSelectState queueSelectState,
             //     TranscodingState transcodingState,
             CleanupState cleanupState,
             SchedulerState schedulerState,
-            SchedulerSettings schedulerSettings
+            SchedulerSettings schedulerSettings,
+            FileSizeConstraint fileSizeConstraint,
+            TimeConstraint timeConstraint
     ) {
 
         // startup --> Initialize Workflow
@@ -36,11 +41,20 @@ public class ManualAutoWorkflow
         // WorkflowInit --> Manual Video Scan
         initialState.bindNextStateToTrigger(scanManualInputState, InitializedStateTrigger.class);
 
-        // manual video scan --> Search for option file
-        scanManualInputState.bindNextStateToTrigger(optionsFileSearchState, ListResultTrigger.class, listTrigger -> {
-            optionsFileSearchState.setVideoList(UnsafeCastUtil.cast(listTrigger.getList()));
+        // manual video scan --> parse option files
+        scanManualInputState.bindNextStateToTrigger(parseOptionsState, ListResultTrigger.class, listTrigger -> {
+            parseOptionsState.setVideoList(UnsafeCastUtil.cast(listTrigger.getList()));
             return null;
         });
+
+        // parse options --> select job to queue
+        parseOptionsState.bindNextStateToTrigger(queueSelectState, ListResultTrigger.class, trigger -> {
+            queueSelectState.setVideoPackageList(trigger.getList());
+            return null;
+        });
+
+        queueSelectState.setConstraints(fileSizeConstraint, timeConstraint);
+
         schedulerState.setSettings(schedulerSettings);
         //  transcodingState.bindStateToTrigger(cleanupState, TranscodingFinishedTrigger.class);
 
