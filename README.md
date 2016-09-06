@@ -29,38 +29,3 @@ this software, but instead relies on a 3rd party software like handbrake. ffmpeg
   * Time-Window: E.g. Only transcode during the night
   * File size: If a video is very big, a Raspberry Pi might take a very long time. Leave the job for another server with more processing power.
 
-
-
-# The Workflow
-* 2 Input folders: Auto and Manual. Auto is for automatic encoding, the other is for manually provided video files. Manually created jobs are prioritized, but won't
-  disrupt the current job.
-* Each node picks a video file from the input folder, selects a template of options, and begins to transcode.
-* The output file is being written either directly to your library or another location for manual quality verification or whatever you do with it. 
-* Delete the source (if enabled and source is unneeded)
-* Get the next video.
-
-I'll provide some sort of flowchart sometime in the future. This project is not usable yet...
-
-# FAQ
-
-### What is "Manual Transcoding"
-If you have a file that needs transcoding with different properties than the default template (e.g. dual audio track, multiple subtitles, ...) 
-then you can provide a custom template which has all the options defined for that video file. Maybe you have a movie that you want to put on your mobile device
-but it needs a different format than usual.
-
-### What is "Automatic Transcoding"
-If you have a software like Couchpotato which downloads movies and puts them in a output folder, you can pick them up and do some post processing after download.
-If you are concerned about file size or unified codec use in your library, use this. However, automatic transcoding might no yield the result you expected from a particular movie. So to correct this, there is manual transcoding mode.
-
-### Why not ffmpeg?
-So far as I'm aware, ffmpeg does not support x265 which reduces file size in half but uses more CPU power. 
-Encoding in x265 takes forever, but if I can do that unattended and automatically, I don't really care about time anymore.
-
-### Why Java and not some script language like Bash?
-I'm faster at coding in Java than bash. Simple as that.
-
-### You speak of cluster. Do I need 3 Nodes to form a quorum?
-No, you can run it on a single node. I keep things rather simple. If you use multiple nodes however, you need to provide some sort of common storage where every node writes to the same data volume.
-
-### I have a different workflow!
-Fine! Fork the project and have a look at the statemachine package. I think I found some sort of configurable workflow even if it needs re-compiling.
