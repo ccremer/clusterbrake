@@ -1,5 +1,6 @@
 package net.chrigel.clusterbrake.workflow.manualauto;
 
+import net.chrigel.clusterbrake.statemachine.states.AbstractScanState;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import java.io.File;
@@ -10,8 +11,7 @@ import java.util.List;
 import net.chrigel.clusterbrake.media.FileScanner;
 import net.chrigel.clusterbrake.media.Video;
 import net.chrigel.clusterbrake.statemachine.StateContext;
-import net.chrigel.clusterbrake.statemachine.states.AbstractState;
-import net.chrigel.clusterbrake.statemachine.trigger.ErrorTrigger;
+import net.chrigel.clusterbrake.statemachine.trigger.ExceptionTrigger;
 import net.chrigel.clusterbrake.statemachine.trigger.GenericCollectionTrigger;
 import net.chrigel.clusterbrake.workflow.manualauto.settings.InputSettings;
 import net.chrigel.clusterbrake.workflow.manualauto.settings.OptionDirVideoPair;
@@ -20,10 +20,9 @@ import net.chrigel.clusterbrake.workflow.manualauto.settings.OptionDirVideoPair;
  *
  */
 public class ScanManualInputDirState
-        extends AbstractState {
+        extends AbstractScanState {
 
     private final InputSettings inputSettings;
-    private final Provider<FileScanner<Video>> videoScannerProvider;
 
     @Inject
     ScanManualInputDirState(
@@ -31,9 +30,8 @@ public class ScanManualInputDirState
             InputSettings inputSettings,
             Provider<FileScanner<Video>> videoScannerProvider
     ) {
-        super(context);
+        super(context, videoScannerProvider);
         this.inputSettings = inputSettings;
-        this.videoScannerProvider = videoScannerProvider;
     }
 
     @Override
@@ -69,32 +67,19 @@ public class ScanManualInputDirState
 
         } catch (IOException ex) {
             logger.error(ex);
-            fireStateTrigger(new ErrorTrigger());
+            fireStateTrigger(new ExceptionTrigger(ex));
         }
     }
 
     private List<File> getOptionDirs(File baseDir) {
-        List<File> optionDirs = new LinkedList<>(
-                Arrays.asList(
-                        baseDir.listFiles((File pathname) -> {
-                            return pathname.isDirectory();
-                        })));
-        return optionDirs;
-    }
-
-    private List<Video> scanForVideoFiles(
-            File baseDir, List<String> allowedExtensions, boolean recursive) throws IOException {
-        logger.info("Scanning for media files: {}", baseDir);
-        return videoScannerProvider.get()
-                .search(baseDir)
-                .withRecursion(recursive)
-                .withFileExtensionFilter(allowedExtensions)
-                .scan();
+        return Arrays.asList(
+                baseDir.listFiles((File pathname) -> {
+                    return pathname.isDirectory();
+                }));
     }
 
     @Override
     protected void exitState() {
-
     }
 
 }

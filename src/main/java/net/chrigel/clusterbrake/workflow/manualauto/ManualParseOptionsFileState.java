@@ -1,5 +1,6 @@
 package net.chrigel.clusterbrake.workflow.manualauto;
 
+import net.chrigel.clusterbrake.statemachine.states.AbstractOptionParseState;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import java.io.File;
@@ -8,13 +9,11 @@ import java.text.ParseException;
 import java.util.LinkedList;
 import java.util.List;
 import net.chrigel.clusterbrake.media.OptionsFileParser;
-import net.chrigel.clusterbrake.media.Video;
 import net.chrigel.clusterbrake.media.VideoOptionPackage;
 import net.chrigel.clusterbrake.media.VideoPackage;
 import net.chrigel.clusterbrake.settings.TemplateSettings;
 import net.chrigel.clusterbrake.statemachine.StateContext;
-import net.chrigel.clusterbrake.statemachine.states.AbstractState;
-import net.chrigel.clusterbrake.statemachine.trigger.ErrorTrigger;
+import net.chrigel.clusterbrake.statemachine.trigger.ExceptionTrigger;
 import net.chrigel.clusterbrake.statemachine.trigger.GenericCollectionTrigger;
 import net.chrigel.clusterbrake.workflow.manualauto.settings.OptionDirVideoPair;
 import net.chrigel.clusterbrake.workflow.manualauto.settings.WorkflowTemplateSettings;
@@ -22,18 +21,15 @@ import net.chrigel.clusterbrake.workflow.manualauto.settings.WorkflowTemplateSet
 /**
  *
  */
-public class ParseOptionsFileState
-        extends AbstractState {
+class ManualParseOptionsFileState
+        extends AbstractOptionParseState {
 
     private List<OptionDirVideoPair> list;
     private final TemplateSettings templateSettings;
     private final WorkflowTemplateSettings workflowTemplateSettings;
-    private final Provider<VideoOptionPackage> optionPackageProvider;
-    private final Provider<OptionsFileParser> optionParserProvider;
-    private final Provider<VideoPackage> videoPackageProvider;
 
     @Inject
-    ParseOptionsFileState(
+    ManualParseOptionsFileState(
             StateContext context,
             TemplateSettings templateSettings,
             WorkflowTemplateSettings workflowTemplateSettings,
@@ -41,15 +37,12 @@ public class ParseOptionsFileState
             Provider<OptionsFileParser> optionParserProvider,
             Provider<VideoPackage> videoPackageProvider
     ) {
-        super(context);
+        super(context, optionPackageProvider, optionParserProvider, videoPackageProvider);
         this.templateSettings = templateSettings;
         this.workflowTemplateSettings = workflowTemplateSettings;
-        this.optionPackageProvider = optionPackageProvider;
-        this.optionParserProvider = optionParserProvider;
-        this.videoPackageProvider = videoPackageProvider;
     }
 
-    public void setVideoList(List<OptionDirVideoPair> list) {
+    public void setOptionDirList(List<OptionDirVideoPair> list) {
         this.list = list;
     }
 
@@ -58,7 +51,7 @@ public class ParseOptionsFileState
 
         if (!workflowTemplateSettings.getDefaultManualTemplate().exists()) {
             logger.error("Default template for manual encoding does not exist!");
-            fireStateTrigger(new ErrorTrigger("Default template for manual encoding does not exist!"));
+            fireStateTrigger(new ExceptionTrigger("Default template for manual encoding does not exist!"));
         }
         List<VideoPackage> packageList = new LinkedList<>();
         /**
@@ -82,37 +75,17 @@ public class ParseOptionsFileState
                                         pair.getVideoList()));
                     } else {
                         packageList.addAll(
-                            applyOptionsTemplate(
-                                    workflowTemplateSettings.getDefaultManualTemplate(),
-                                    pair.getVideoList()));
+                                applyOptionsTemplate(
+                                        workflowTemplateSettings.getDefaultManualTemplate(),
+                                        pair.getVideoList()));
                     }
                 }
 
             } catch (ParseException | IOException ex) {
-                logger.error("Could not read options: {}", ex);
+                logger.warn("Could not read options: {}", ex);
             }
         });
         fireStateTrigger(new GenericCollectionTrigger(packageList));
-    }
-
-    private List<VideoPackage> applyOptionsTemplate(File template, List<Video> videoList)
-            throws IOException, ParseException {
-
-        List<VideoPackage> pkgList = new LinkedList<>();
-        logger.info("Parsing {}", template);
-        List<String> options = optionParserProvider
-                .get()
-                .parseFile(template);
-        videoList.parallelStream().forEach(video -> {
-            VideoPackage videoPkg = videoPackageProvider.get();
-            VideoOptionPackage optionPkg = optionPackageProvider.get();
-            optionPkg.setOptionFile(template);
-            optionPkg.setOptions(options);
-            videoPkg.setSettings(optionPkg);
-            videoPkg.setVideo(video);
-            pkgList.add(videoPkg);
-        });
-        return pkgList;
     }
 
     @Override

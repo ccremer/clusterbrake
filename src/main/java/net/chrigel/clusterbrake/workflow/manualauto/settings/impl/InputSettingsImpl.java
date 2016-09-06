@@ -1,4 +1,4 @@
-package net.chrigel.clusterbrake.workflow.manualauto.settings;
+package net.chrigel.clusterbrake.workflow.manualauto.settings.impl;
 
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
@@ -7,11 +7,12 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import net.chrigel.clusterbrake.settings.DirectorySettings;
+import net.chrigel.clusterbrake.workflow.manualauto.settings.InputSettings;
 
 /**
  *
  */
-public class InputSettingsImpl
+class InputSettingsImpl
         implements InputSettings {
 
     private final File manualInputDir;

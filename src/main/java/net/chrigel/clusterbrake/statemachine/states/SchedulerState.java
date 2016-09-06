@@ -7,7 +7,6 @@ import java.util.concurrent.TimeUnit;
 import net.chrigel.clusterbrake.settings.SchedulerSettings;
 import net.chrigel.clusterbrake.statemachine.StateContext;
 import net.chrigel.clusterbrake.statemachine.trigger.ScheduledActionTrigger;
-import net.chrigel.clusterbrake.statemachine.states.AbstractState;
 
 /**
  *
@@ -40,6 +39,7 @@ public class SchedulerState
     @Override
     protected void enterState() {
         this.executor = Executors.newSingleThreadScheduledExecutor();
+        logger.debug("Scheduling a task in {} {}", settings.getDelay(), settings.getTimeUnit());
         if (settings.useRepeat()) {
             this.executor.scheduleAtFixedRate(() -> {
                 runTask();

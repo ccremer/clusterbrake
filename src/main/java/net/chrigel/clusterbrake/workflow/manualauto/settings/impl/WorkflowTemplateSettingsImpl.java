@@ -1,14 +1,15 @@
-package net.chrigel.clusterbrake.workflow.manualauto.settings;
+package net.chrigel.clusterbrake.workflow.manualauto.settings.impl;
 
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 import java.io.File;
 import net.chrigel.clusterbrake.settings.TemplateSettings;
+import net.chrigel.clusterbrake.workflow.manualauto.settings.WorkflowTemplateSettings;
 
 /**
  *
  */
-public class WorkflowTemplateSettingsImpl
+class WorkflowTemplateSettingsImpl
         implements WorkflowTemplateSettings {
 
     private final File defaultAutoTemplate;

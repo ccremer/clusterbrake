@@ -31,7 +31,7 @@ import org.mockito.MockitoAnnotations;
 public class ParseOptionsFileStateTest {
 
     @Mock
-    private ParseOptionsFileState subject;
+    private ManualParseOptionsFileState subject;
 
     @Mock
     private StateContext context;
@@ -77,8 +77,8 @@ public class ParseOptionsFileStateTest {
         FileUtils.deleteDirectory(TEST_BASE_DIR);
     }
 
-    private ParseOptionsFileState createSubject() {
-        return new ParseOptionsFileState(context, templateSettings, workflowTemplateSettings,
+    private ManualParseOptionsFileState createSubject() {
+        return new ManualParseOptionsFileState(context, templateSettings, workflowTemplateSettings,
                 optionPackageProvider, optionParserProvider, videoPackageProvider);
     }
 
@@ -101,7 +101,7 @@ public class ParseOptionsFileStateTest {
         List<Video> videoList = new LinkedList<>(Arrays.asList(video));
         pairList.add(new OptionDirVideoPair(optionDir, videoList));
 
-        subject.setVideoList(pairList);
+        subject.setOptionDirList(pairList);
         subject.enter();
 
         verify(optionParserProvider).get();
@@ -131,7 +131,7 @@ public class ParseOptionsFileStateTest {
         List<Video> videoList = new LinkedList<>(Arrays.asList(video));
         pairList.add(new OptionDirVideoPair(optionDir, videoList));
 
-        subject.setVideoList(pairList);
+        subject.setOptionDirList(pairList);
         subject.enter();
 
         verify(optionParserProvider).get();

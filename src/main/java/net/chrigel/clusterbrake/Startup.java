@@ -29,6 +29,7 @@ public class Startup {
         logger = LogManager.getLogger(Startup.class);
         Thread.setDefaultUncaughtExceptionHandler((thread, throwable) -> {
             logger.error("Uncaught exception:", throwable);
+            System.exit(1);
         });
 
         logger.info("Working dir: {}", new File("").getAbsolutePath());
@@ -57,7 +58,7 @@ public class Startup {
         logger.info("Booting application...");
         Injector injector = Guice.createInjector(modules);
 
-        injector.getInstance(StateContext.class);
+        injector.getInstance(StateContext.class).reset();
     }
 
     private static void generateNodeIDOnFirstLaunch(Configuration config) {

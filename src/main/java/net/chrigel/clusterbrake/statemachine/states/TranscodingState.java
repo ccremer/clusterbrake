@@ -9,7 +9,7 @@ import net.chrigel.clusterbrake.statemachine.StateContext;
 import net.chrigel.clusterbrake.statemachine.trigger.TranscodingFinishedTrigger;
 import net.chrigel.clusterbrake.transcode.Transcoder;
 import net.chrigel.clusterbrake.settings.Job;
-import net.chrigel.clusterbrake.statemachine.trigger.ErrorTrigger;
+import net.chrigel.clusterbrake.statemachine.trigger.ExceptionTrigger;
 
 /**
  *
@@ -38,7 +38,10 @@ public class TranscodingState
     protected void enterState() {
         try {
             job.setStartTime(LocalDateTime.now(Clock.systemDefaultZone()));
-            int returnValue = transcoderProvider.get()
+            job.getVideoPackage().getOutputFile().getParentFile().mkdirs();
+            currentTranscoder = transcoderProvider.get();
+            logger.info("Begining transcode...");
+            int returnValue = currentTranscoder
                     .from(job.getVideoPackage().getVideo().getSourceFile())
                     .to(job.getVideoPackage().getOutputFile())
                     .withOptions(job.getVideoPackage().getSettings().getOptions())
@@ -50,12 +53,12 @@ public class TranscodingState
                 fireStateTrigger(new TranscodingFinishedTrigger(job));
             } else {
                 logger.error("Transcoder exited with code {}", returnValue);
-                fireStateTrigger(new ErrorTrigger("Transcoder exited with code " + returnValue));
+                fireStateTrigger(new ExceptionTrigger("Transcoder exited with code " + returnValue));
             }
 
         } catch (InterruptedException | IOException ex) {
             logger.error("Could not transcode file: {}", ex);
-            fireStateTrigger(new ErrorTrigger(ex));
+            fireStateTrigger(new ExceptionTrigger(ex));
         }
     }
 

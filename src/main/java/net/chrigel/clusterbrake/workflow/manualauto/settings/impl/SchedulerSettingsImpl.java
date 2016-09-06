@@ -1,4 +1,4 @@
-package net.chrigel.clusterbrake.workflow.manualauto.settings;
+package net.chrigel.clusterbrake.workflow.manualauto.settings.impl;
 
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
@@ -8,7 +8,7 @@ import net.chrigel.clusterbrake.settings.SchedulerSettings;
 /**
  *
  */
-public class SchedulerSettingsImpl
+class SchedulerSettingsImpl
         implements SchedulerSettings {
 
     private final long delay;

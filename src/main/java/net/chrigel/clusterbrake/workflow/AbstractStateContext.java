@@ -28,13 +28,15 @@ public abstract class AbstractStateContext
         // an executor is needed to avoid a stackoverflow.
         executor.submit(() -> {
             if (currentState != null) {
-                logger.debug("Shutting down current state {}...", this.currentState);
                 currentState.exit();
             }
 
-            logger.info("Setting state to {}...", state);
             currentState = state;
-            currentState.enter();
+            try {
+                currentState.enter();
+            } catch (Exception ex) {
+                logger.error(ex);
+            }
         });
     }
 

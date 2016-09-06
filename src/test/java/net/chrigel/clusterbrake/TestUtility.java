@@ -9,7 +9,7 @@ public class TestUtility {
 
     
     public static File getTestResourcesDir() {
-        return new File("src/test/java");
+        return new File("src/test/resources");
     }
     
 }
