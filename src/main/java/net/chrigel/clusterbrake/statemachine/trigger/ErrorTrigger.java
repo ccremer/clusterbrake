@@ -1,14 +1,11 @@
 package net.chrigel.clusterbrake.statemachine.trigger;
 
-import net.chrigel.clusterbrake.statemachine.Trigger;
-
 /**
  *
  */
 public class ErrorTrigger
-        implements Trigger {
+        extends MessageTrigger {
 
-    private final String message;
     private final Throwable ex;
 
     public ErrorTrigger() {
@@ -24,15 +21,11 @@ public class ErrorTrigger
     }
 
     public ErrorTrigger(String message, Throwable ex) {
-        this.message = message;
+        super(message);
         this.ex = ex;
     }
 
     public Throwable getThrowable() {
         return ex;
-    }
-
-    public String getMessage() {
-        return message;
     }
 }

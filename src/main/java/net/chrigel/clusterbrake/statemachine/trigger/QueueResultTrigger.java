@@ -5,11 +5,11 @@ import net.chrigel.clusterbrake.settings.Job;
 /**
  *
  */
-public class TranscodingFinishedTrigger
+public class QueueResultTrigger
         extends GenericPayloadTrigger<Job> {
 
-    public TranscodingFinishedTrigger(Job job) {
-        super(job);
+    public QueueResultTrigger(Job payload) {
+        super(payload);
     }
 
 }

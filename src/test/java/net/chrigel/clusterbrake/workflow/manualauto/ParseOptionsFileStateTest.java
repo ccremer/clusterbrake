@@ -13,7 +13,7 @@ import net.chrigel.clusterbrake.media.VideoOptionPackage;
 import net.chrigel.clusterbrake.media.VideoPackage;
 import net.chrigel.clusterbrake.settings.TemplateSettings;
 import net.chrigel.clusterbrake.statemachine.StateContext;
-import net.chrigel.clusterbrake.statemachine.trigger.ListResultTrigger;
+import net.chrigel.clusterbrake.statemachine.trigger.GenericCollectionTrigger;
 import net.chrigel.clusterbrake.workflow.manualauto.settings.OptionDirVideoPair;
 import net.chrigel.clusterbrake.workflow.manualauto.settings.WorkflowTemplateSettings;
 import org.apache.commons.io.FileUtils;
@@ -86,7 +86,7 @@ public class ParseOptionsFileStateTest {
     public void testEnterState_ShouldCorrectlyParseTemplateFile_IfItExists() throws Exception {
         subject = createSubject();
         AtomicBoolean isCalled = new AtomicBoolean();
-        subject.bindNextStateToTrigger(null, ListResultTrigger.class, trigger -> {
+        subject.bindNextStateToTrigger(null, GenericCollectionTrigger.class, trigger -> {
             isCalled.set(true);
             return null;
         });
@@ -118,7 +118,7 @@ public class ParseOptionsFileStateTest {
     public void testEnterState_ShouldCorrectlyParseDefaultFile() throws Exception {
         subject = createSubject();
         AtomicBoolean isCalled = new AtomicBoolean();
-        subject.bindNextStateToTrigger(null, ListResultTrigger.class, trigger -> {
+        subject.bindNextStateToTrigger(null, GenericCollectionTrigger.class, trigger -> {
             isCalled.set(true);
             return null;
         });

@@ -8,7 +8,7 @@ import net.chrigel.clusterbrake.media.VideoPackage;
 /**
  *
  */
-class VideoPackageImpl
+public class VideoPackageImpl
         implements VideoPackage {
 
     private Video video;

@@ -9,7 +9,7 @@ import net.chrigel.clusterbrake.media.FileScanner;
 import net.chrigel.clusterbrake.media.Video;
 import net.chrigel.clusterbrake.media.impl.VideoFileScanner;
 import net.chrigel.clusterbrake.statemachine.StateContext;
-import net.chrigel.clusterbrake.statemachine.trigger.ListResultTrigger;
+import net.chrigel.clusterbrake.statemachine.trigger.GenericCollectionTrigger;
 import net.chrigel.clusterbrake.workflow.manualauto.settings.InputSettings;
 import org.apache.commons.io.FileUtils;
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -71,9 +71,9 @@ public class ScanManualInputDirStateTest {
         File level3File = new File(TEST_BASE_DIR, "template2/subdir/video3.mp4");
 
         AtomicBoolean called = new AtomicBoolean();
-        subject.bindNextStateToTrigger(null, ListResultTrigger.class, (ListResultTrigger param) -> {
+        subject.bindNextStateToTrigger(null, GenericCollectionTrigger.class, trigger -> {
 
-            assertThat(param.getList().size(), equalTo(3));
+            assertThat(trigger.getPayload().size(), equalTo(3));
 
             called.set(true);
             return null;

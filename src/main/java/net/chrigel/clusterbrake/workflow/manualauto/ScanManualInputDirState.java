@@ -12,7 +12,7 @@ import net.chrigel.clusterbrake.media.Video;
 import net.chrigel.clusterbrake.statemachine.StateContext;
 import net.chrigel.clusterbrake.statemachine.states.AbstractState;
 import net.chrigel.clusterbrake.statemachine.trigger.ErrorTrigger;
-import net.chrigel.clusterbrake.statemachine.trigger.ListResultTrigger;
+import net.chrigel.clusterbrake.statemachine.trigger.GenericCollectionTrigger;
 import net.chrigel.clusterbrake.workflow.manualauto.settings.InputSettings;
 import net.chrigel.clusterbrake.workflow.manualauto.settings.OptionDirVideoPair;
 
@@ -65,7 +65,7 @@ public class ScanManualInputDirState
                             inputSettings.getManualInputDirectory(),
                             inputSettings.getVideoExtensions(),
                             false)));
-            fireStateTrigger(new ListResultTrigger(pairList));
+            fireStateTrigger(new GenericCollectionTrigger(pairList));
 
         } catch (IOException ex) {
             logger.error(ex);

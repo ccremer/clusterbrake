@@ -5,6 +5,7 @@ import net.chrigel.clusterbrake.settings.DirectorySettings;
 import net.chrigel.clusterbrake.workflow.manualauto.settings.InputSettings;
 import net.chrigel.clusterbrake.statemachine.StateContext;
 import net.chrigel.clusterbrake.statemachine.states.AbstractState;
+import net.chrigel.clusterbrake.statemachine.trigger.InitializedStateTrigger;
 
 /**
  *
@@ -27,7 +28,7 @@ public class WorkflowInitialState
 
     @Override
     protected void enterState() {
-
+        fireStateTrigger(new InitializedStateTrigger());
     }
 
     @Override

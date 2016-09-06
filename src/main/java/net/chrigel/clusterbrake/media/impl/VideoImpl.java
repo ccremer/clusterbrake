@@ -11,6 +11,10 @@ class VideoImpl
 
     private final File source;
 
+    VideoImpl() {
+        this.source = null;
+    }
+
     VideoImpl(File source) {
         this.source = source;
 
