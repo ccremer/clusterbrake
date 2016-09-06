@@ -29,3 +29,6 @@ this software, but instead relies on a 3rd party software like handbrake. ffmpeg
   * Time-Window: E.g. Only transcode during the night
   * File size: If a video is very big, a Raspberry Pi might take a very long time. Leave the job for another server with more processing power.
 
+# Project status
+This project is currently under heavy development (2016-09-06).
+After a release which will work in my personal environment, maintenance will be limited. If you encounter a bug, open an issue, but I won't promise a fix.
