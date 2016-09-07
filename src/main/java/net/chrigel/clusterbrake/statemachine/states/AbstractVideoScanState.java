@@ -1,6 +1,7 @@
 package net.chrigel.clusterbrake.statemachine.states;
 
 import com.google.inject.Provider;
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import net.chrigel.clusterbrake.media.DirType;
@@ -25,13 +26,14 @@ public abstract class AbstractVideoScanState
     }
 
     protected List<Video> scanForVideoFiles(
-            DirType baseDir, List<String> allowedExtensions, boolean recursive) throws IOException {
+            File searchDir, DirType baseDir, List<String> allowedExtensions, boolean recursive) throws IOException {
         logger.info("Scanning for media files: {}", baseDir);
         return videoScannerProvider.get()
-                .search(baseDir)
+                .search(searchDir)
+                .withBaseDirType(baseDir)
                 .withRecursion(recursive)
                 .withFileExtensionFilter(allowedExtensions)
                 .scan();
     }
-    
+
 }

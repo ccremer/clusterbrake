@@ -12,8 +12,8 @@ public class JobImpl
 
     private VideoPackage pkg;
     private String nodeId;
-    private LocalDateTime startTime;
-    private LocalDateTime finishTime;
+    private LocalDateTime beginTime;
+    private LocalDateTime endTime;
 
     @Override
     public VideoPackage getVideoPackage() {
@@ -37,22 +37,22 @@ public class JobImpl
 
     @Override
     public LocalDateTime getStartTime() {
-        return startTime;
+        return beginTime;
     }
 
     @Override
     public void setStartTime(LocalDateTime time) {
-        this.startTime = time;
+        this.beginTime = time;
     }
 
     @Override
     public LocalDateTime getFinishTime() {
-        return finishTime;
+        return endTime;
     }
 
     @Override
     public void setFinishTime(LocalDateTime time) {
-        this.finishTime = time;
+        this.endTime = time;
     }
 
 }

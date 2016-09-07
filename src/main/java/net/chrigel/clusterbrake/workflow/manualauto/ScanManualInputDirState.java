@@ -11,7 +11,6 @@ import java.util.List;
 import net.chrigel.clusterbrake.media.FileScanner;
 import net.chrigel.clusterbrake.media.Video;
 import net.chrigel.clusterbrake.statemachine.StateContext;
-import net.chrigel.clusterbrake.statemachine.trigger.ExceptionTrigger;
 import net.chrigel.clusterbrake.statemachine.trigger.GenericCollectionTrigger;
 import net.chrigel.clusterbrake.workflow.manualauto.settings.InputSettings;
 import net.chrigel.clusterbrake.workflow.manualauto.settings.OptionDirVideoPair;
@@ -48,6 +47,7 @@ public class ScanManualInputDirState
                 pairList.add(new OptionDirVideoPair(
                         optionDir,
                         scanForVideoFiles(
+                                optionDir,
                                 DirTypes.INPUT_MANUAL,
                                 inputSettings.getVideoExtensions(), true)));
             } catch (IOException ex) {

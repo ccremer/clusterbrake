@@ -12,7 +12,7 @@ public class VideoPackageImpl
         implements VideoPackage {
 
     private Video video;
-    private FileContainer outputFile;
+    private FileContainer output;
     private VideoOptionPackage settings;
 
     @Override
@@ -27,12 +27,12 @@ public class VideoPackageImpl
 
     @Override
     public FileContainer getOutputFile() {
-        return outputFile;
+        return output;
     }
 
     @Override
     public void setOutputFile(FileContainer file) {
-        this.outputFile = file;
+        this.output = file;
     }
 
     @Override

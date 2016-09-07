@@ -1,6 +1,7 @@
 package net.chrigel.clusterbrake.media.impl;
 
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.LinkedList;
 import java.util.List;
 import net.chrigel.clusterbrake.media.FileContainer;
@@ -23,10 +24,13 @@ public class OptionFileScanner
     @Override
     public List<VideoOptionPackage> scan() throws IOException {
         List<VideoOptionPackage> resultList = new LinkedList<>();
-        scanForFiles(getSearchDir().getBase(), getExtensions(), isRecursive())
+        scanForFiles(getSearchDir(), getExtensions(), isRecursive())
                 .forEachRemaining(file -> {
                     logger.debug("Found {}", file);
-                    resultList.add(new HandbrakeOptionPackage(new FileContainer(getSearchDir(), file)));
+                    Path full = file.toPath();
+                    Path base = getDirType().getBase().toPath();
+                    Path relative = base.relativize(full);
+                    resultList.add(new HandbrakeOptionPackage(new FileContainer(getDirType(), relative.toFile())));
                 });
         return resultList;
     }

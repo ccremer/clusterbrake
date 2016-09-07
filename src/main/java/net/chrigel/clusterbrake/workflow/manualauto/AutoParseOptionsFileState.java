@@ -53,7 +53,8 @@ class AutoParseOptionsFileState
         }
         try {
             List<VideoPackage> packageList = applyOptionsTemplate(
-                    workflowTemplateSettings.getDefaultAutoTemplate(), videos);
+                    workflowTemplateSettings.getDefaultAutoTemplate(),
+                    DirTypes.INPUT_AUTO, videos);
             fireStateTrigger(new GenericCollectionTrigger(packageList));
         } catch (IOException | ParseException ex) {
             fireStateTrigger(new ExceptionTrigger("Could not apply template file.", ex, getClass()));

@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.util.LinkedList;
 import java.util.List;
+import net.chrigel.clusterbrake.media.DirType;
 import net.chrigel.clusterbrake.media.FileContainer;
 import net.chrigel.clusterbrake.media.OptionsFileParser;
 import net.chrigel.clusterbrake.media.Video;
@@ -34,7 +35,8 @@ public abstract class AbstractOptionParseState
         this.videoPackageProvider = videoPackageProvider;
     }
 
-    protected List<VideoPackage> applyOptionsTemplate(FileContainer template, List<Video> videoList)
+    protected List<VideoPackage> applyOptionsTemplate(FileContainer template, DirType inputDirType,
+            List<Video> videoList)
             throws IOException, ParseException {
 
         List<VideoPackage> pkgList = new LinkedList<>();
@@ -49,6 +51,7 @@ public abstract class AbstractOptionParseState
             optionPkg.setOptions(options);
             videoPkg.setSettings(optionPkg);
             videoPkg.setVideo(video);
+            video.getSourceFile().setDirType(inputDirType);
             pkgList.add(videoPkg);
         });
         return pkgList;

@@ -54,6 +54,7 @@ class ManualParseOptionsFileState
                     packageList.addAll(
                             applyOptionsTemplate(
                                     templateContainer,
+                                    DirTypes.INPUT_MANUAL,
                                     pair.getVideoList()));
                 } else {
                     logger.warn("Skipping all files in {} because template file {} does not exist!",
@@ -65,6 +66,8 @@ class ManualParseOptionsFileState
         });
         fireStateTrigger(new GenericCollectionTrigger(packageList));
     }
+
+   
 
     @Override
     protected void exitState() {

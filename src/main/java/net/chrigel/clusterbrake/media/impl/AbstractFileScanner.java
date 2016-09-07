@@ -1,15 +1,11 @@
 package net.chrigel.clusterbrake.media.impl;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import net.chrigel.clusterbrake.media.DirType;
-import net.chrigel.clusterbrake.media.FileContainer;
 import net.chrigel.clusterbrake.media.FileScanner;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.FilenameUtils;
 
 /**
  *
@@ -18,18 +14,29 @@ import org.apache.commons.io.FilenameUtils;
 public abstract class AbstractFileScanner<T>
         implements FileScanner<T> {
 
-    private DirType searchDir;
+    private File searchDir;
     private boolean isRecursive;
     private List<String> allowedExtensions;
+    private DirType dirType;
 
     @Override
-    public FileScanner<T> search(DirType dir) {
+    public FileScanner<T> search(File dir) {
         this.searchDir = dir;
         return this;
     }
 
-    protected final DirType getSearchDir() {
+    protected final File getSearchDir() {
         return searchDir;
+    }
+
+    @Override
+    public FileScanner<T> withBaseDirType(DirType dirType) {
+        this.dirType = dirType;
+        return this;
+    }
+
+    protected final DirType getDirType() {
+        return dirType;
     }
 
     @Override
@@ -57,29 +64,6 @@ public abstract class AbstractFileScanner<T>
                 searchDir,
                 allowedExtensions.toArray(new String[0]),
                 isRecursive);
-    }
-
-    protected List<FileContainer> scanForSameFilesWithDifferentExtensions(
-            File fileWithExtension,
-            List<String> extensions)
-            throws IOException {
-        List<FileContainer> list = new LinkedList<>();
-        String pathNameWithoutExtension = FilenameUtils.removeExtension(fileWithExtension.getName());
-        String fileNameWithoutExtension = FilenameUtils.getName(pathNameWithoutExtension);
-        try {
-            Iterator<String> itr = extensions.iterator();
-            while (itr.hasNext()) {
-                String extension = itr.next();
-                String fileName = String.format("%1$s.%2$s", fileNameWithoutExtension, extension);
-                File child = new File(fileWithExtension.getParentFile(), fileName);
-                if (child.exists() && child.isFile()) {
-                    list.add(new FileContainer(searchDir, child));
-                }
-            }
-        } catch (IllegalArgumentException ex) {
-            throw new IOException(ex);
-        }
-        return list;
     }
 
 }

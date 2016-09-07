@@ -27,8 +27,11 @@ import org.mockito.Mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import org.mockito.MockitoAnnotations;
+import static org.junit.Assert.assertThat;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.verify;
 
-public class ParseOptionsFileStateTest {
+public class ManualParseOptionsFileStateTest {
 
     @Mock
     private ManualParseOptionsFileState subject;
@@ -57,6 +60,7 @@ public class ParseOptionsFileStateTest {
         TEST_BASE_DIR.mkdirs();
         DirTypes.TEMPLATE.getBase().mkdirs();
 
+        when(video.getSourceFile()).thenReturn(new FileContainer(DirTypes.INPUT_MANUAL, "test.mkv"));
         when(optionPackageProvider.get()).thenReturn(optionPackage);
         when(optionParserProvider.get()).thenReturn(parser);
         when(videoPackageProvider.get()).thenReturn(videoPackage);

@@ -57,7 +57,7 @@ public class TranscodingState
             }
 
         } catch (InterruptedException | IOException ex) {
-            logger.error("Could not transcode file: {}", ex);
+            logger.error("Could not transcode file.", ex);
             fireStateTrigger(new ExceptionTrigger(ex));
         }
     }

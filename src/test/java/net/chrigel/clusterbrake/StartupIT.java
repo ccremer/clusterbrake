@@ -2,22 +2,18 @@ package net.chrigel.clusterbrake;
 
 import java.io.File;
 import java.io.IOException;
-import net.chrigel.clusterbrake.media.DirType;
 import net.chrigel.clusterbrake.workflow.manualauto.DirTypes;
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Test;
-import static org.junit.Assert.*;
 import org.junit.Before;
-import org.junit.BeforeClass;
 
 /**
  *
  */
 public class StartupIT {
 
-    private static final File TEST_BASE_DIR = new File("test");
+    private static final File TEST_BASE_DIR = TestUtility.getTestDir();
 
     private final File testSource = new File(TestUtility.getTestResourcesDir(), "testsample.mp4");
 
@@ -37,8 +33,9 @@ public class StartupIT {
 
         DirTypes.INPUT_AUTO.getBase().mkdirs();
         DirTypes.INPUT_MANUAL.getBase().mkdirs();
-        DirTypes.TEMPLATE.getBase().mkdir();
-        DirTypes.OUTPUT_MANUAL.getBase().mkdir();
+        DirTypes.TEMPLATE.getBase().mkdirs();
+        DirTypes.OUTPUT_MANUAL.getBase().mkdirs();
+        DirTypes.OUTPUT_AUTO.getBase().mkdirs();
         FileUtils.copyFile(testSource, new File(DirTypes.INPUT_MANUAL.getBase(), "test/testsample.mp4"));
         FileUtils.copyFile(
                 new File(TestUtility.getTestResourcesDir(), "test.conf"),

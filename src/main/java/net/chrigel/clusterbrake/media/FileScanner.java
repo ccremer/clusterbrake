@@ -1,5 +1,6 @@
 package net.chrigel.clusterbrake.media;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
@@ -9,7 +10,9 @@ import java.util.List;
  */
 public interface FileScanner<T> {
 
-    FileScanner<T> search(DirType dirOrFile);
+    FileScanner<T> search(File dirOrFile);
+    
+    FileScanner<T> withBaseDirType(DirType dirType);
 
     FileScanner<T> withRecursion(boolean recursive);
 

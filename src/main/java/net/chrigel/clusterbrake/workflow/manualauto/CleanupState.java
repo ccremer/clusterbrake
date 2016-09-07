@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import net.chrigel.clusterbrake.media.DirType;
 import net.chrigel.clusterbrake.settings.Job;
 import net.chrigel.clusterbrake.settings.JobSettings;
 import net.chrigel.clusterbrake.statemachine.StateContext;
@@ -53,7 +54,8 @@ public class CleanupState
             jobs.add(finishedJob);
         }
         File temp = finishedJob.getVideoPackage().getOutputFile().getFullPath();
-        finishedJob.getVideoPackage().getOutputFile().setDirType(DirTypes.OUTPUT);
+        DirType outputType = finishedJob.getVideoPackage().getOutputFile().getType();
+        finishedJob.getVideoPackage().getOutputFile().setDirType(convertOutputMode(outputType));
         File finalOutput = finishedJob.getVideoPackage().getOutputFile().getFullPath();
         jobSettings.setJobs(jobs);
         if (cleanupSettings.isAsyncMoveEnabled()) {
@@ -73,6 +75,21 @@ public class CleanupState
             FileUtils.moveFile(from, to);
         } catch (IOException ex) {
             logger.error(ex);
+        }
+    }
+
+    private DirType convertOutputMode(DirType type) {
+        if (type instanceof DirTypes) {
+            switch ((DirTypes) type) {
+                case INPUT_AUTO:
+                    return DirTypes.OUTPUT_AUTO;
+                case INPUT_MANUAL:
+                    return DirTypes.OUTPUT_MANUAL;
+                default:
+                    return DirTypes.OUTPUT;
+            }
+        } else {
+            return DirTypes.OUTPUT;
         }
     }
 

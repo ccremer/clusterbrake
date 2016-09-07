@@ -36,6 +36,7 @@ public class ScanAutoInputDirState
         try {
             fireStateTrigger(new GenericCollectionTrigger(
                     scanForVideoFiles(
+                            DirTypes.INPUT_AUTO.getBase(),
                             DirTypes.INPUT_AUTO, inputSettings.getVideoExtensions(), true)));
         } catch (IOException ex) {
             logger.error(ex);
