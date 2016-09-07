@@ -1,7 +1,5 @@
 package net.chrigel.clusterbrake.media;
 
-import java.io.File;
-
 /**
  *
  */
@@ -11,9 +9,9 @@ public interface VideoPackage {
 
     void setVideo(Video video);
     
-    File getOutputFile();
+    FileContainer getOutputFile();
 
-    void setOutputFile(File file);
+    void setOutputFile(FileContainer file);
 
     VideoOptionPackage getSettings();
 

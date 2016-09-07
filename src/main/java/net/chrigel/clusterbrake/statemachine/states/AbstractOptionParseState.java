@@ -1,11 +1,11 @@
 package net.chrigel.clusterbrake.statemachine.states;
 
 import com.google.inject.Provider;
-import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.LinkedList;
 import java.util.List;
+import net.chrigel.clusterbrake.media.FileContainer;
 import net.chrigel.clusterbrake.media.OptionsFileParser;
 import net.chrigel.clusterbrake.media.Video;
 import net.chrigel.clusterbrake.media.VideoOptionPackage;
@@ -34,14 +34,14 @@ public abstract class AbstractOptionParseState
         this.videoPackageProvider = videoPackageProvider;
     }
 
-    protected List<VideoPackage> applyOptionsTemplate(File template, List<Video> videoList)
+    protected List<VideoPackage> applyOptionsTemplate(FileContainer template, List<Video> videoList)
             throws IOException, ParseException {
 
         List<VideoPackage> pkgList = new LinkedList<>();
-        logger.info("Parsing {}", template);
+        logger.info("Parsing {}", template.getFullPath());
         List<String> options = optionParserProvider
                 .get()
-                .parseFile(template);
+                .parseFile(template.getFullPath());
         videoList.parallelStream().forEach(video -> {
             VideoPackage videoPkg = videoPackageProvider.get();
             VideoOptionPackage optionPkg = optionPackageProvider.get();

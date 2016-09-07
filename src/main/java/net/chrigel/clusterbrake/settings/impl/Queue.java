@@ -7,11 +7,11 @@ import net.chrigel.clusterbrake.settings.Job;
 /**
  *
  */
-class Queue {
+public class Queue {
 
     private List<Job> jobs;
 
-    Queue() {
+    public Queue() {
     }
 
     Queue(List<Job> jobs) {

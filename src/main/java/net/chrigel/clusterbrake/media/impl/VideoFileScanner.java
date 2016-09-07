@@ -3,6 +3,7 @@ package net.chrigel.clusterbrake.media.impl;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
+import net.chrigel.clusterbrake.media.FileContainer;
 import net.chrigel.clusterbrake.media.Video;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -22,22 +23,11 @@ public class VideoFileScanner
     @Override
     public List<Video> scan() throws IOException {
         List<Video> resultList = new LinkedList<>();
-        scanForFiles(getSearchDir(), getExtensions(), isRecursive())
+        scanForFiles(getSearchDir().getBase(), getExtensions(), isRecursive())
                 .forEachRemaining(file -> {
                     logger.debug("Found {}", file);
-                    resultList.add(new VideoImpl(file));
+                    resultList.add(new VideoImpl(new FileContainer(getSearchDir(), file)));
                 });
-        return resultList;
-    }
-
-    @Override
-    public List<Video> scanForSameFilenamesButDifferentExtensions() throws IOException {
-        List<Video> resultList = new LinkedList<>();
-
-        scanForSameFilesWithDifferentExtensions(getSearchDir(), getExtensions()).forEach(file -> {
-            logger.debug("Found {}", file);
-            resultList.add(new VideoImpl(file));
-        });
         return resultList;
     }
 

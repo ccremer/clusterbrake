@@ -1,10 +1,11 @@
 package net.chrigel.clusterbrake.workflow.manualauto;
 
 import com.google.inject.Inject;
-import net.chrigel.clusterbrake.settings.DirectorySettings;
-import net.chrigel.clusterbrake.workflow.manualauto.settings.InputSettings;
+import com.google.inject.name.Named;
+import java.io.File;
 import net.chrigel.clusterbrake.statemachine.StateContext;
 import net.chrigel.clusterbrake.statemachine.states.AbstractState;
+import net.chrigel.clusterbrake.statemachine.trigger.ExceptionTrigger;
 import net.chrigel.clusterbrake.statemachine.trigger.InitializedStateTrigger;
 
 /**
@@ -13,21 +14,47 @@ import net.chrigel.clusterbrake.statemachine.trigger.InitializedStateTrigger;
 public class WorkflowInitialState
         extends AbstractState {
 
-    private final DirectorySettings dirSettings;
-    private final InputSettings inputSettings;
-
     @Inject
     public WorkflowInitialState(
             StateContext context,
-            DirectorySettings dirSettings,
-            InputSettings inputSettings) {
+            @Named("dir.input") String inputDir,
+            @Named("dir.output") String outputDir,
+            @Named("dir.config") String configDir,
+            @Named("dir.templates") String templateDir,
+            @Named("workflow.queue.dir.temp") String tempDir,
+            @Named("workflow.input.dir.auto") String autoInputDir,
+            @Named("workflow.input.dir.manual") String manualInputDir
+    ) {
         super(context);
-        this.dirSettings = dirSettings;
-        this.inputSettings = inputSettings;
+
+        File inputFolder = new File(inputDir);
+        File outputFolder = new File(outputDir);
+
+        DirTypes.CONFIG.setDir(new File(configDir));
+        DirTypes.INPUT.setDir(inputFolder);
+        DirTypes.INPUT_AUTO.setDir(new File(inputFolder, autoInputDir));
+        DirTypes.INPUT_MANUAL.setDir(new File(inputFolder, manualInputDir));
+        DirTypes.OUTPUT.setDir(outputFolder);
+        DirTypes.OUTPUT_AUTO.setDir(new File(outputFolder, autoInputDir));
+        DirTypes.OUTPUT_MANUAL.setDir(new File(outputFolder, manualInputDir));
+        DirTypes.TEMP.setDir(new File(tempDir));
+        DirTypes.TEMPLATE.setDir(new File(templateDir));
     }
 
     @Override
     protected void enterState() {
+
+        logger.debug("Checking if base dirs exist...");
+        if (!DirTypes.INPUT_AUTO.getBase().exists()) {
+            fireStateTrigger(new ExceptionTrigger("Input directory 'auto' does not exist!"));
+        }
+        if (!DirTypes.INPUT_MANUAL.getBase().exists()) {
+            fireStateTrigger(new ExceptionTrigger("Input directory 'manual' does not exist!"));
+        }
+        if (!DirTypes.OUTPUT.getBase().exists()) {
+            logger.error("Output directory does not exist!");
+        }
+
         fireStateTrigger(new InitializedStateTrigger());
     }
 

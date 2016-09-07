@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicBoolean;
+import net.chrigel.clusterbrake.TestUtility;
 import net.chrigel.clusterbrake.media.FileScanner;
 import net.chrigel.clusterbrake.media.Video;
 import net.chrigel.clusterbrake.media.impl.VideoFileScanner;
@@ -42,20 +43,18 @@ public class ScanManualInputDirStateTest {
     public void setup() {
         MockitoAnnotations.initMocks(this);
         when(scannerProvider.get()).thenReturn(new VideoFileScanner());
-        when(inputSettings.getManualInputDirectory()).thenReturn(TEST_BASE_DIR);
         when(inputSettings.getVideoExtensions()).thenReturn(Arrays.asList("mp4", "mkv"));
     }
 
-    private static final File TEST_BASE_DIR = new File("test");
-
     @BeforeClass
     public static void classSetup() {
-        TEST_BASE_DIR.mkdir();
+        TestUtility.initDirs();
+        DirTypes.INPUT_MANUAL.getBase().mkdirs();
     }
 
     @AfterClass
     public static void tearDown() throws IOException {
-        FileUtils.deleteDirectory(TEST_BASE_DIR);
+        FileUtils.deleteDirectory(TestUtility.getTestDir());
     }
 
     private ScanManualInputDirState createSubject() {
@@ -66,14 +65,14 @@ public class ScanManualInputDirStateTest {
     public void testEnterState() throws IOException {
         subject = createSubject();
 
-        File level1File = new File(TEST_BASE_DIR, "video2.mp4");
-        File level2File = new File(TEST_BASE_DIR, "template1/video2.mkv");
-        File level3File = new File(TEST_BASE_DIR, "template2/subdir/video3.mp4");
+        File level1File = new File(DirTypes.INPUT_MANUAL.getBase(), "video2.mp4");
+        File level2File = new File(DirTypes.INPUT_MANUAL.getBase(), "template1/video2.mkv");
+        File level3File = new File(DirTypes.INPUT_MANUAL.getBase(), "template2/subdir/video3.mp4");
 
         AtomicBoolean called = new AtomicBoolean();
         subject.bindNextStateToTrigger(null, GenericCollectionTrigger.class, trigger -> {
 
-            assertThat(trigger.getPayload().size(), equalTo(3));
+            assertThat(trigger.getPayload().size(), equalTo(2));
 
             called.set(true);
             return null;

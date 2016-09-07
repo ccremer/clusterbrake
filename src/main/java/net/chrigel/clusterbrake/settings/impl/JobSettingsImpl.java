@@ -1,16 +1,22 @@
 package net.chrigel.clusterbrake.settings.impl;
 
+import com.owlike.genson.Context;
+import com.owlike.genson.Converter;
 import com.owlike.genson.GensonBuilder;
 import com.owlike.genson.reflect.VisibilityFilter;
+import com.owlike.genson.stream.ObjectReader;
+import com.owlike.genson.stream.ObjectWriter;
 import java.io.File;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
+import net.chrigel.clusterbrake.media.DirType;
 import net.chrigel.clusterbrake.media.impl.VideoPackageImpl;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import net.chrigel.clusterbrake.settings.Job;
 import net.chrigel.clusterbrake.settings.JobSettings;
+import net.chrigel.clusterbrake.workflow.manualauto.DirTypes;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  *
@@ -34,12 +40,14 @@ class JobSettingsImpl
                 .addAlias("Queue", Queue.class)
                 .addAlias("Job", JobImpl.class)
                 .addAlias("VideoPackage", VideoPackageImpl.class)
+                .withConverter(new DirTypeDeserializer(), DirType.class)
         );
     }
 
     @Override
     public List<Job> getJobs() {
         try {
+            logger.info("Reading jobs from {}", settingsFile.getAbsolutePath());
             Queue queue = serializer.deserialize(settingsFile);
             return queue.getJobs();
         } catch (IOException ex) {
@@ -56,8 +64,8 @@ class JobSettingsImpl
     @Override
     public void setJobs(List<Job> queue) {
         try {
-            Queue holder = new Queue(queue);
-            serializer.serialize(settingsFile, holder);
+            logger.info("Saving jobs in {}", settingsFile.getAbsolutePath());
+            serializer.serialize(settingsFile, new Queue(queue));
         } catch (IOException ex) {
             logger.error(ex);
         }
@@ -68,4 +76,20 @@ class JobSettingsImpl
         this.settingsFile = file;
     }
 
+    class DirTypeDeserializer implements Converter<DirType> {
+
+        @Override
+        public DirType deserialize(ObjectReader reader, Context ctx) throws Exception {
+            DirType type = DirTypes.valueOf(reader.valueAsString());
+            return type;
+        }
+
+        @Override
+        public void serialize(DirType type, ObjectWriter writer, Context ctx) throws Exception {
+     //       writer.beginObject();
+            writer.writeString("type", type.toString());
+       //     writer.endObject();
+        }
+
+    }
 }

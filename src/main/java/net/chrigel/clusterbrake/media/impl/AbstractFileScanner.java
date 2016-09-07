@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import net.chrigel.clusterbrake.media.DirType;
+import net.chrigel.clusterbrake.media.FileContainer;
 import net.chrigel.clusterbrake.media.FileScanner;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
@@ -16,17 +18,17 @@ import org.apache.commons.io.FilenameUtils;
 public abstract class AbstractFileScanner<T>
         implements FileScanner<T> {
 
-    private File searchDir;
+    private DirType searchDir;
     private boolean isRecursive;
     private List<String> allowedExtensions;
 
     @Override
-    public FileScanner<T> search(File dir) {
+    public FileScanner<T> search(DirType dir) {
         this.searchDir = dir;
         return this;
     }
 
-    protected final File getSearchDir() {
+    protected final DirType getSearchDir() {
         return searchDir;
     }
 
@@ -57,11 +59,11 @@ public abstract class AbstractFileScanner<T>
                 isRecursive);
     }
 
-    protected List<File> scanForSameFilesWithDifferentExtensions(
+    protected List<FileContainer> scanForSameFilesWithDifferentExtensions(
             File fileWithExtension,
             List<String> extensions)
             throws IOException {
-        List<File> list = new LinkedList<>();
+        List<FileContainer> list = new LinkedList<>();
         String pathNameWithoutExtension = FilenameUtils.removeExtension(fileWithExtension.getName());
         String fileNameWithoutExtension = FilenameUtils.getName(pathNameWithoutExtension);
         try {
@@ -71,7 +73,7 @@ public abstract class AbstractFileScanner<T>
                 String fileName = String.format("%1$s.%2$s", fileNameWithoutExtension, extension);
                 File child = new File(fileWithExtension.getParentFile(), fileName);
                 if (child.exists() && child.isFile()) {
-                    list.add(child);
+                    list.add(new FileContainer(searchDir, child));
                 }
             }
         } catch (IllegalArgumentException ex) {

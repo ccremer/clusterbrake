@@ -44,7 +44,7 @@ class AutoParseOptionsFileState
 
     @Override
     protected void enterState() {
-        File defaultTemplate = workflowTemplateSettings.getDefaultAutoTemplate();
+        File defaultTemplate = workflowTemplateSettings.getDefaultAutoTemplate().getFullPath();
         if (!defaultTemplate.exists()) {
             fireStateTrigger(new ExceptionTrigger(
                     "Default template for auto encoding does not exist!",
@@ -52,7 +52,8 @@ class AutoParseOptionsFileState
                     getClass()));
         }
         try {
-            List<VideoPackage> packageList = applyOptionsTemplate(defaultTemplate, videos);
+            List<VideoPackage> packageList = applyOptionsTemplate(
+                    workflowTemplateSettings.getDefaultAutoTemplate(), videos);
             fireStateTrigger(new GenericCollectionTrigger(packageList));
         } catch (IOException | ParseException ex) {
             fireStateTrigger(new ExceptionTrigger("Could not apply template file.", ex, getClass()));

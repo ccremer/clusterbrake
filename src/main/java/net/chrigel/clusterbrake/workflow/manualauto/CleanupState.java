@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import net.chrigel.clusterbrake.settings.DirectorySettings;
 import net.chrigel.clusterbrake.settings.Job;
 import net.chrigel.clusterbrake.settings.JobSettings;
 import net.chrigel.clusterbrake.statemachine.StateContext;
@@ -24,19 +23,16 @@ public class CleanupState
     private Job finishedJob;
     private final CleanupSettings cleanupSettings;
     private final ExecutorService executor;
-    private final DirectorySettings dirSettings;
 
     @Inject
     CleanupState(
             StateContext context,
             JobSettings jobSettings,
-            DirectorySettings dirSettings,
             CleanupSettings cleanupSettings
     ) {
         super(context);
         this.jobSettings = jobSettings;
-        this.jobSettings.setSettingsFile(new File(dirSettings.getConfigBaseDir(), "finished.json"));
-        this.dirSettings = dirSettings;
+        this.jobSettings.setSettingsFile(new File(DirTypes.CONFIG.getBase(), "finished.json"));
         this.cleanupSettings = cleanupSettings;
         this.executor = Executors.newSingleThreadExecutor();
     }
@@ -49,25 +45,23 @@ public class CleanupState
     protected void enterState() {
 
         List<Job> jobs = jobSettings.getJobs();
-        File source = this.finishedJob.getVideoPackage().getVideo().getSourceFile();
+        File source = this.finishedJob.getVideoPackage().getVideo().getSourceFile().getFullPath();
         if (cleanupSettings.isSourceDeletionEnabled()) {
             logger.info("Deleting {}", source);
             source.delete();
         } else {
             jobs.add(finishedJob);
         }
-
-        File finalOutput = new File(
-                dirSettings.getOutputBaseDir(),
-                finishedJob.getVideoPackage().getVideo().getSourceFile().getPath());
-        finishedJob.getVideoPackage().setOutputFile(finalOutput);
+        File temp = finishedJob.getVideoPackage().getOutputFile().getFullPath();
+        finishedJob.getVideoPackage().getOutputFile().setDirType(DirTypes.OUTPUT);
+        File finalOutput = finishedJob.getVideoPackage().getOutputFile().getFullPath();
         jobSettings.setJobs(jobs);
         if (cleanupSettings.isAsyncMoveEnabled()) {
             executor.submit(() -> {
-                moveFile(finishedJob.getVideoPackage().getOutputFile(), finalOutput);
+                moveFile(temp, finalOutput);
             });
         } else {
-            moveFile(finishedJob.getVideoPackage().getOutputFile(), finalOutput);
+            moveFile(temp, finalOutput);
         }
 
     }

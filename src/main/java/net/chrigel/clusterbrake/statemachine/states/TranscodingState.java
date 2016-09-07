@@ -38,12 +38,12 @@ public class TranscodingState
     protected void enterState() {
         try {
             job.setStartTime(LocalDateTime.now(Clock.systemDefaultZone()));
-            job.getVideoPackage().getOutputFile().getParentFile().mkdirs();
+            job.getVideoPackage().getOutputFile().getFullPath().getParentFile().mkdirs();
             currentTranscoder = transcoderProvider.get();
             logger.info("Begining transcode...");
             int returnValue = currentTranscoder
-                    .from(job.getVideoPackage().getVideo().getSourceFile())
-                    .to(job.getVideoPackage().getOutputFile())
+                    .from(job.getVideoPackage().getVideo().getSourceFile().getFullPath())
+                    .to(job.getVideoPackage().getOutputFile().getFullPath())
                     .withOptions(job.getVideoPackage().getSettings().getOptions())
                     .transcode();
 

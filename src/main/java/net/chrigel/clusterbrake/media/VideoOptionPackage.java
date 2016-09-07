@@ -1,6 +1,5 @@
 package net.chrigel.clusterbrake.media;
 
-import java.io.File;
 import java.util.List;
 
 /**
@@ -12,8 +11,8 @@ public interface VideoOptionPackage {
 
     void setOptions(List<String> options);
 
-    File getOptionFile();
+    FileContainer getOptionFile();
     
-    void setOptionFile(File file);
+    void setOptionFile(FileContainer file);
 
 }

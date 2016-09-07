@@ -1,6 +1,6 @@
 package net.chrigel.clusterbrake.media.impl;
 
-import java.io.File;
+import net.chrigel.clusterbrake.media.FileContainer;
 import net.chrigel.clusterbrake.media.Video;
 import net.chrigel.clusterbrake.media.VideoOptionPackage;
 import net.chrigel.clusterbrake.media.VideoPackage;
@@ -12,7 +12,7 @@ public class VideoPackageImpl
         implements VideoPackage {
 
     private Video video;
-    private File outputFile;
+    private FileContainer outputFile;
     private VideoOptionPackage settings;
 
     @Override
@@ -26,12 +26,12 @@ public class VideoPackageImpl
     }
 
     @Override
-    public File getOutputFile() {
+    public FileContainer getOutputFile() {
         return outputFile;
     }
 
     @Override
-    public void setOutputFile(File file) {
+    public void setOutputFile(FileContainer file) {
         this.outputFile = file;
     }
 

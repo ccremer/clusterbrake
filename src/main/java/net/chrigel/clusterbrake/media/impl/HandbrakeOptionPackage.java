@@ -3,6 +3,7 @@ package net.chrigel.clusterbrake.media.impl;
 import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
+import net.chrigel.clusterbrake.media.FileContainer;
 import net.chrigel.clusterbrake.media.VideoOptionPackage;
 
 /**
@@ -11,13 +12,13 @@ import net.chrigel.clusterbrake.media.VideoOptionPackage;
 class HandbrakeOptionPackage
         implements VideoOptionPackage {
 
-    private File source;
+    private FileContainer source;
     private List<String> options = new LinkedList<>();
 
     HandbrakeOptionPackage() {
     }
 
-    HandbrakeOptionPackage(File source) {
+    HandbrakeOptionPackage(FileContainer source) {
         this.source = source;
     }
 
@@ -32,12 +33,12 @@ class HandbrakeOptionPackage
     }
 
     @Override
-    public File getOptionFile() {
+    public FileContainer getOptionFile() {
         return source;
     }
 
     @Override
-    public void setOptionFile(File file) {
+    public void setOptionFile(FileContainer file) {
         this.source = file;
     }
 

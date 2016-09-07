@@ -1,14 +1,12 @@
 package net.chrigel.clusterbrake.workflow.manualauto.settings;
 
-import java.io.File;
+import net.chrigel.clusterbrake.media.FileContainer;
 
 /**
  *
  */
 public interface WorkflowTemplateSettings {
     
-    File getDefaultManualTemplate();
-    
-    File getDefaultAutoTemplate();
+    FileContainer getDefaultAutoTemplate();
     
 }

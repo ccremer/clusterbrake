@@ -8,7 +8,6 @@ import net.chrigel.clusterbrake.settings.constraint.TimeConstraint;
 import net.chrigel.clusterbrake.statemachine.states.AbstractState;
 import net.chrigel.clusterbrake.statemachine.states.ErrorState;
 import net.chrigel.clusterbrake.statemachine.states.SchedulerState;
-import net.chrigel.clusterbrake.statemachine.states.StartupState;
 import net.chrigel.clusterbrake.statemachine.states.TranscodingState;
 import net.chrigel.clusterbrake.statemachine.trigger.ExceptionTrigger;
 import net.chrigel.clusterbrake.statemachine.trigger.GenericCollectionTrigger;
@@ -27,7 +26,6 @@ public class ManualAutoWorkflow
 
     @Inject
     ManualAutoWorkflow(
-            StartupState startupState,
             ErrorState errorState,
             WorkflowInitialState initialState,
             ScanManualInputDirState scanManualInputState,
@@ -51,9 +49,6 @@ public class ManualAutoWorkflow
         // set static state settings
         queueSelectState.setConstraints(fileSizeConstraint, timeConstraint);
         schedulerState.setSettings(schedulerSettings);
-
-        // startup --> Initialize Workflow
-        startupState.bindNextStateToTrigger(initialState, InitializedStateTrigger.class);
 
         // WorkflowInit --> Manual Video Scan
         initialState.bindNextStateToTrigger(scanManualInputState, InitializedStateTrigger.class);
@@ -85,7 +80,7 @@ public class ManualAutoWorkflow
             return null;
         });
 
-        setStartupState(startupState);
+        setStartupState(initialState);
     }
 
     private void bindErrorStates(ErrorState errorState, AbstractState... states) {

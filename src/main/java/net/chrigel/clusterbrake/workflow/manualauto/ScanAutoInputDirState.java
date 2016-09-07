@@ -1,6 +1,6 @@
 package net.chrigel.clusterbrake.workflow.manualauto;
 
-import net.chrigel.clusterbrake.statemachine.states.AbstractScanState;
+import net.chrigel.clusterbrake.statemachine.states.AbstractVideoScanState;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import java.io.IOException;
@@ -15,7 +15,7 @@ import net.chrigel.clusterbrake.workflow.manualauto.settings.InputSettings;
  *
  */
 public class ScanAutoInputDirState
-        extends AbstractScanState {
+        extends AbstractVideoScanState {
 
     private final InputSettings inputSettings;
 
@@ -31,11 +31,12 @@ public class ScanAutoInputDirState
 
     @Override
     protected void enterState() {
-        logger.debug("Looking for input directories in {}", inputSettings.getAutoInputDirectory());
+        logger.debug("Looking for input directories in {}", DirTypes.INPUT_AUTO);
 
         try {
-            fireStateTrigger(new GenericCollectionTrigger(scanForVideoFiles(
-                    inputSettings.getAutoInputDirectory(), inputSettings.getVideoExtensions(), true)));
+            fireStateTrigger(new GenericCollectionTrigger(
+                    scanForVideoFiles(
+                            DirTypes.INPUT_AUTO, inputSettings.getVideoExtensions(), true)));
         } catch (IOException ex) {
             logger.error(ex);
             fireStateTrigger(new ExceptionTrigger("Could not scan for files.", ex));

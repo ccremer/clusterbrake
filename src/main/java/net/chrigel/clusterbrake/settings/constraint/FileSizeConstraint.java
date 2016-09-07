@@ -2,6 +2,7 @@ package net.chrigel.clusterbrake.settings.constraint;
 
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
+import java.io.File;
 import net.chrigel.clusterbrake.media.Video;
 
 /**
@@ -39,7 +40,8 @@ public class FileSizeConstraint
             return true;
         }
 
-        long size = video.getSourceFile().length();
+        File file = video.getSourceFile().getFullPath();
+        long size = file.length();
         if (minSize > 0 && maxSize <= 0) {
             return size >= minSize;
         } else if (minSize <= 0 && maxSize > 0) {

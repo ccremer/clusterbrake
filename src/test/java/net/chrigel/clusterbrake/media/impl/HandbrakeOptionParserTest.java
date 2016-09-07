@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
+import net.chrigel.clusterbrake.TestUtility;
 import org.apache.commons.io.FileUtils;
 import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.hasItem;
@@ -23,7 +24,7 @@ public class HandbrakeOptionParserTest {
 
     private final HandbrakeOptionParser subject = new HandbrakeOptionParser();
 
-    private static final File TEST_BASE_DIR = new File("test");
+    private static final File TEST_BASE_DIR = TestUtility.getTestDir();
 
     @Before
     public void setup() {
@@ -32,7 +33,7 @@ public class HandbrakeOptionParserTest {
 
     @BeforeClass
     public static void classSetup() {
-        TEST_BASE_DIR.mkdir();
+        TEST_BASE_DIR.mkdirs();
     }
 
     @AfterClass

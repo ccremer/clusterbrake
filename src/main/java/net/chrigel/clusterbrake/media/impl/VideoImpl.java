@@ -1,6 +1,6 @@
 package net.chrigel.clusterbrake.media.impl;
 
-import java.io.File;
+import net.chrigel.clusterbrake.media.FileContainer;
 import net.chrigel.clusterbrake.media.Video;
 
 /**
@@ -9,19 +9,19 @@ import net.chrigel.clusterbrake.media.Video;
 class VideoImpl
         implements Video {
 
-    private final File source;
+    private final FileContainer source;
 
     VideoImpl() {
         this.source = null;
     }
 
-    VideoImpl(File source) {
+    VideoImpl(FileContainer source) {
         this.source = source;
 
     }
 
     @Override
-    public File getSourceFile() {
+    public FileContainer getSourceFile() {
         return source;
     }
 

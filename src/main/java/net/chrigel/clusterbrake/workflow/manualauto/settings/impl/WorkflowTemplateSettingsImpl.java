@@ -3,7 +3,8 @@ package net.chrigel.clusterbrake.workflow.manualauto.settings.impl;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 import java.io.File;
-import net.chrigel.clusterbrake.settings.TemplateSettings;
+import net.chrigel.clusterbrake.media.FileContainer;
+import net.chrigel.clusterbrake.workflow.manualauto.DirTypes;
 import net.chrigel.clusterbrake.workflow.manualauto.settings.WorkflowTemplateSettings;
 
 /**
@@ -12,26 +13,17 @@ import net.chrigel.clusterbrake.workflow.manualauto.settings.WorkflowTemplateSet
 class WorkflowTemplateSettingsImpl
         implements WorkflowTemplateSettings {
 
-    private final File defaultAutoTemplate;
-    private final File defaultManualTemplate;
+    private final FileContainer defaultAutoTemplate;
 
     @Inject
     WorkflowTemplateSettingsImpl(
-            @Named("workflow.template.manual.defaultFilename") String manualFileName,
-            @Named("workflow.template.auto.defaultFilename") String autoFileName,
-            TemplateSettings settings
+            @Named("workflow.template.auto.defaultFilename") String autoFileName
     ) {
-        this.defaultAutoTemplate = new File(settings.getTemplateDir(), autoFileName);
-        this.defaultManualTemplate = new File(settings.getTemplateDir(), manualFileName);
+        this.defaultAutoTemplate = new FileContainer(DirTypes.TEMPLATE, new File(autoFileName));
     }
 
     @Override
-    public File getDefaultManualTemplate() {
-        return defaultManualTemplate;
-    }
-
-    @Override
-    public File getDefaultAutoTemplate() {
+    public FileContainer getDefaultAutoTemplate() {
         return defaultAutoTemplate;
     }
 
