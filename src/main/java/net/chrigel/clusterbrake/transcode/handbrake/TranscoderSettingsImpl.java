@@ -1,4 +1,4 @@
-package net.chrigel.clusterbrake.transcode.impl;
+package net.chrigel.clusterbrake.transcode.handbrake;
 
 import com.google.inject.Inject;
 import com.google.inject.name.Named;

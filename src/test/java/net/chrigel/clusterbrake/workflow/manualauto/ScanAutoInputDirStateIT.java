@@ -12,21 +12,17 @@ import net.chrigel.clusterbrake.media.impl.VideoFileScanner;
 import net.chrigel.clusterbrake.statemachine.StateContext;
 import net.chrigel.clusterbrake.statemachine.trigger.GenericCollectionTrigger;
 import net.chrigel.clusterbrake.workflow.manualauto.settings.InputSettings;
-import net.chrigel.clusterbrake.workflow.manualauto.triggers.NoResultTrigger;
 import org.apache.commons.io.FileUtils;
 import static org.hamcrest.CoreMatchers.equalTo;
 import org.junit.After;
+import org.junit.Test;
 import static org.junit.Assert.*;
 import org.junit.Before;
-import org.junit.Test;
 import org.mockito.Mock;
 import static org.mockito.Mockito.when;
 import org.mockito.MockitoAnnotations;
 
-/**
- *
- */
-public class ScanManualInputDirStateTest {
+public class ScanAutoInputDirStateIT {
 
     @Mock
     private StateContext context;
@@ -37,12 +33,12 @@ public class ScanManualInputDirStateTest {
     @Mock
     private Provider<FileScanner<Video>> scannerProvider;
 
-    private ScanManualInputDirState subject;
+    private ScanAutoInputDirState subject;
 
     @Before
     public void setup() {
         TestUtility.initDirs();
-        DirTypes.INPUT_MANUAL.getBase().mkdirs();
+        DirTypes.INPUT_AUTO.getBase().mkdirs();
         MockitoAnnotations.initMocks(this);
         when(scannerProvider.get()).thenReturn(new VideoFileScanner());
         when(inputSettings.getVideoExtensions()).thenReturn(Arrays.asList("mp4", "mkv"));
@@ -53,22 +49,22 @@ public class ScanManualInputDirStateTest {
         FileUtils.deleteDirectory(TestUtility.getTestDir());
     }
 
-    private ScanManualInputDirState createSubject() {
-        return new ScanManualInputDirState(context, inputSettings, scannerProvider);
+    private ScanAutoInputDirState createSubject() {
+        return new ScanAutoInputDirState(context, inputSettings, scannerProvider);
     }
 
     @Test
     public void testEnterState_ShouldFindFiles() throws IOException {
         subject = createSubject();
 
-        File level1File = new File(DirTypes.INPUT_MANUAL.getBase(), "video1.mp4");
-        File level2File = new File(DirTypes.INPUT_MANUAL.getBase(), "template1/video2.mkv");
-        File level3File = new File(DirTypes.INPUT_MANUAL.getBase(), "template2/subdir/video3.mp4");
+        File level1File = new File(DirTypes.INPUT_AUTO.getBase(), "video1.mp4");
+        File level2File = new File(DirTypes.INPUT_AUTO.getBase(), "movie2/video2.mkv");
+        File level3File = new File(DirTypes.INPUT_AUTO.getBase(), "movie2/subdir/video3.mp4");
 
         AtomicBoolean called = new AtomicBoolean();
         subject.bindNextStateToTrigger(null, GenericCollectionTrigger.class, trigger -> {
 
-            assertThat(trigger.getPayload().size(), equalTo(2));
+            assertThat(trigger.getPayload().size(), equalTo(3));
 
             called.set(true);
             return null;
@@ -83,15 +79,18 @@ public class ScanManualInputDirStateTest {
     }
 
     @Test
-    public void testEnterState_ShouldTriggerNoResult() throws IOException {
+    public void testEnterState_ShouldShouldTriggerWithEmptyList() throws IOException {
         subject = createSubject();
 
-        File level1File = new File(DirTypes.INPUT_MANUAL.getBase(), "ignored.mp4");
-        File level2File = new File(DirTypes.INPUT_MANUAL.getBase(), "template1/video2.nfo");
-        File level3File = new File(DirTypes.INPUT_MANUAL.getBase(), "template2/subdir/video3.srt");
+        File level1File = new File(DirTypes.INPUT_AUTO.getBase(), "video1.nfo");
+        File level2File = new File(DirTypes.INPUT_AUTO.getBase(), "template1/video2.srt");
+        File level3File = new File(DirTypes.INPUT_AUTO.getBase(), "template2/subdir/video3.other");
 
         AtomicBoolean called = new AtomicBoolean();
-        subject.bindNextStateToTrigger(null, NoResultTrigger.class, trigger -> {
+        subject.bindNextStateToTrigger(null, GenericCollectionTrigger.class, trigger -> {
+
+            assertThat(trigger.getPayload().size(), equalTo(0));
+
             called.set(true);
             return null;
         });

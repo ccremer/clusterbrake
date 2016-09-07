@@ -1,4 +1,4 @@
-package net.chrigel.clusterbrake.media.impl;
+package net.chrigel.clusterbrake.transcode.handbrake;
 
 import java.io.File;
 import java.io.IOException;
@@ -17,9 +17,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.MockitoAnnotations;
 
-/**
- *
- */
 public class HandbrakeOptionParserTest {
 
     private final HandbrakeOptionParser subject = new HandbrakeOptionParser();

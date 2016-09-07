@@ -47,7 +47,6 @@ public abstract class AbstractOptionParseState
         videoList.parallelStream().forEach(video -> {
             VideoPackage videoPkg = videoPackageProvider.get();
             VideoOptionPackage optionPkg = optionPackageProvider.get();
-            optionPkg.setOptionFile(template);
             optionPkg.setOptions(options);
             videoPkg.setSettings(optionPkg);
             videoPkg.setVideo(video);

@@ -19,12 +19,9 @@ import net.chrigel.clusterbrake.workflow.manualauto.settings.OptionDirVideoPair;
 import org.apache.commons.io.FileUtils;
 import static org.hamcrest.CoreMatchers.equalTo;
 import org.junit.After;
-import static org.junit.Assert.assertThat;
 import org.junit.Before;
 import org.junit.Test;
-import static org.mockito.Matchers.any;
 import org.mockito.Mock;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import org.mockito.MockitoAnnotations;
 import static org.junit.Assert.assertThat;
@@ -33,7 +30,6 @@ import static org.mockito.Mockito.verify;
 
 public class ManualParseOptionsFileStateTest {
 
-    @Mock
     private ManualParseOptionsFileState subject;
 
     @Mock
@@ -101,7 +97,6 @@ public class ManualParseOptionsFileStateTest {
 
         verify(optionParserProvider).get();
         verify(optionPackageProvider).get();
-        verify(optionPackage).setOptionFile(optionContainer);
         verify(optionPackage).setOptions(any());
         verify(videoPackage).setSettings(optionPackage);
         verify(videoPackage).setVideo(video);

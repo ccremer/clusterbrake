@@ -34,8 +34,8 @@ public class StartupIT {
         DirTypes.INPUT_AUTO.getBase().mkdirs();
         DirTypes.INPUT_MANUAL.getBase().mkdirs();
         DirTypes.TEMPLATE.getBase().mkdirs();
-        DirTypes.OUTPUT_MANUAL.getBase().mkdirs();
-        DirTypes.OUTPUT_AUTO.getBase().mkdirs();
+     //   DirTypes.OUTPUT_MANUAL.getBase().mkdirs();
+     //   DirTypes.OUTPUT_AUTO.getBase().mkdirs();
         FileUtils.copyFile(testSource, new File(DirTypes.INPUT_MANUAL.getBase(), "test/testsample.mp4"));
         FileUtils.copyFile(
                 new File(TestUtility.getTestResourcesDir(), "test.conf"),

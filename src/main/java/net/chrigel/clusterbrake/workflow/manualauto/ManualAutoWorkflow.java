@@ -1,6 +1,7 @@
 package net.chrigel.clusterbrake.workflow.manualauto;
 
 import com.google.inject.Inject;
+import net.chrigel.clusterbrake.media.Video;
 import net.chrigel.clusterbrake.media.VideoPackage;
 import net.chrigel.clusterbrake.settings.SchedulerSettings;
 import net.chrigel.clusterbrake.settings.constraint.FileSizeConstraint;
@@ -17,6 +18,7 @@ import net.chrigel.clusterbrake.statemachine.trigger.QueueResultTrigger;
 import net.chrigel.clusterbrake.statemachine.trigger.TranscodingFinishedTrigger;
 import net.chrigel.clusterbrake.workflow.AbstractStateContext;
 import net.chrigel.clusterbrake.workflow.manualauto.settings.OptionDirVideoPair;
+import net.chrigel.clusterbrake.workflow.manualauto.triggers.NoResultTrigger;
 
 /**
  *
@@ -29,7 +31,9 @@ public class ManualAutoWorkflow
             ErrorState errorState,
             WorkflowInitialState initialState,
             ScanManualInputDirState scanManualInputState,
-            ManualParseOptionsFileState parseOptionsState,
+            ScanAutoInputDirState scanAutoInputState,
+            ManualParseOptionsFileState manualParseOptionsState,
+            AutoParseOptionsFileState autoParseOptionsState,
             QueueSelectState queueSelectState,
             TranscodingState transcodingState,
             CleanupState cleanupState,
@@ -41,7 +45,9 @@ public class ManualAutoWorkflow
         bindErrorStates(errorState,
                 initialState,
                 scanManualInputState,
-                parseOptionsState,
+                scanAutoInputState,
+                manualParseOptionsState,
+                autoParseOptionsState,
                 queueSelectState,
                 transcodingState,
                 cleanupState);
@@ -53,14 +59,29 @@ public class ManualAutoWorkflow
         // WorkflowInit --> Manual Video Scan
         initialState.bindNextStateToTrigger(scanManualInputState, InitializedStateTrigger.class);
 
-        // manual video scan --> parse option files
-        scanManualInputState.bindNextStateToTrigger(parseOptionsState, GenericCollectionTrigger.class, listTrigger -> {
-            parseOptionsState.setOptionDirList(listTrigger.getList(OptionDirVideoPair.class));
+        // manual video scan [results found] --> parse option files
+        scanManualInputState.bindNextStateToTrigger(manualParseOptionsState, GenericCollectionTrigger.class, trigger -> {
+            manualParseOptionsState.setOptionDirList(trigger.getList(OptionDirVideoPair.class));
             return null;
         });
 
-        // parse options --> select job to queue
-        parseOptionsState.bindNextStateToTrigger(queueSelectState, GenericCollectionTrigger.class, trigger -> {
+        // manual video scan [no results found] --> auto video scan
+        scanManualInputState.bindNextStateToTrigger(scanAutoInputState, NoResultTrigger.class);
+
+        // manual parse options --> select job to queue
+        manualParseOptionsState.bindNextStateToTrigger(queueSelectState, GenericCollectionTrigger.class, trigger -> {
+            queueSelectState.setVideoPackageList(trigger.getList(VideoPackage.class));
+            return null;
+        });
+
+        // auto video scan --> parse option files
+        scanAutoInputState.bindNextStateToTrigger(autoParseOptionsState, GenericCollectionTrigger.class, trigger -> {
+            autoParseOptionsState.setVideoList(trigger.getList(Video.class));
+            return null;
+        });
+
+        // auto parse options --> select job to queue
+        autoParseOptionsState.bindNextStateToTrigger(queueSelectState, GenericCollectionTrigger.class, trigger -> {
             queueSelectState.setVideoPackageList(trigger.getList(VideoPackage.class));
             return null;
         });
@@ -80,11 +101,14 @@ public class ManualAutoWorkflow
             return null;
         });
 
+        // cleanup --> manual scan
+        cleanupState.bindNextStateToTrigger(scanManualInputState, MessageTrigger.class);
+
         setStartupState(initialState);
     }
 
     private void bindErrorStates(ErrorState errorState, AbstractState... states) {
-        errorState.setApplicationExitEnabled(false);
+        errorState.setApplicationExitEnabled(true);
         errorState.setLoggingEnabled(true);
         for (AbstractState state : states) {
             state.bindNextStateToTrigger(errorState, ExceptionTrigger.class, trigger -> {

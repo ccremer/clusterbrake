@@ -1,5 +1,6 @@
 package net.chrigel.clusterbrake;
 
+import net.chrigel.clusterbrake.util.PropertiesModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
@@ -9,10 +10,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
 import net.chrigel.clusterbrake.media.impl.MediaModule;
-import net.chrigel.clusterbrake.settings.PropertiesModule;
 import net.chrigel.clusterbrake.settings.impl.SettingsModule;
 import net.chrigel.clusterbrake.statemachine.StateContext;
-import net.chrigel.clusterbrake.transcode.impl.TranscoderModule;
+import net.chrigel.clusterbrake.transcode.handbrake.HandbrakeModule;
 import org.apache.commons.configuration2.ex.ConfigurationException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -50,7 +50,7 @@ public class Startup {
         modules.add(new PropertiesModule(configFileName));
         modules.add(new PropertiesModule(commonConfigFile.getPath()));
         modules.add(new PropertiesModule(workflowConfigFile.getPath()));
-        modules.add(new TranscoderModule());
+        modules.add(new HandbrakeModule());
         modules.add(new SettingsModule());
         modules.add(new MediaModule());
         modules.add(getWorkflowModule(loadWorkflowConfiguration(nodeConfig, configDir)));

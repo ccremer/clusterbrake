@@ -12,7 +12,4 @@ public interface JobSettings {
     
     void setJobs(List<Job> jobs);
 
-    File getSettingsFile();
-    
-    void setSettingsFile(File file);
 }

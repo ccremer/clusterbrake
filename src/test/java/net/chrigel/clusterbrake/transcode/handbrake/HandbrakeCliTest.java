@@ -1,4 +1,4 @@
-package net.chrigel.clusterbrake.transcode.impl;
+package net.chrigel.clusterbrake.transcode.handbrake;
 
 import java.io.File;
 import java.io.FileNotFoundException;

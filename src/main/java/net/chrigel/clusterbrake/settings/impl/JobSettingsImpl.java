@@ -1,5 +1,6 @@
 package net.chrigel.clusterbrake.settings.impl;
 
+import net.chrigel.clusterbrake.persistence.GensonSerializer;
 import com.google.inject.Inject;
 import com.owlike.genson.Context;
 import com.owlike.genson.Converter;
@@ -26,7 +27,7 @@ import org.apache.logging.log4j.Logger;
 /**
  *
  */
-class JobSettingsImpl
+public class JobSettingsImpl
         implements JobSettings {
 
     private File settingsFile;
@@ -57,7 +58,7 @@ class JobSettingsImpl
     @Override
     public List<Job> getJobs() {
         try {
-            logger.info("Reading jobs from {}", settingsFile.getAbsolutePath());
+            logger.info("Reading jobs from {}", settingsFile.getPath());
             Queue queue = serializer.deserialize(settingsFile);
             return queue.getJobs();
         } catch (IOException ex) {
@@ -67,21 +68,15 @@ class JobSettingsImpl
     }
 
     @Override
-    public File getSettingsFile() {
-        return settingsFile;
-    }
-
-    @Override
     public void setJobs(List<Job> queue) {
         try {
-            logger.info("Saving jobs in {}", settingsFile.getAbsolutePath());
+            logger.info("Saving jobs in {}", settingsFile.getPath());
             serializer.serialize(settingsFile, new Queue(queue));
         } catch (IOException ex) {
             logger.error(ex);
         }
     }
 
-    @Override
     public void setSettingsFile(File file) {
         this.settingsFile = file;
     }

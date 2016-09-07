@@ -1,4 +1,4 @@
-package net.chrigel.clusterbrake.settings.impl;
+package net.chrigel.clusterbrake.persistence;
 
 import com.owlike.genson.Genson;
 import com.owlike.genson.GensonBuilder;

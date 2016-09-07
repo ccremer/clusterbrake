@@ -3,6 +3,8 @@ package net.chrigel.clusterbrake.workflow.manualauto;
 import com.google.inject.Inject;
 import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -11,8 +13,12 @@ import net.chrigel.clusterbrake.settings.Job;
 import net.chrigel.clusterbrake.settings.JobSettings;
 import net.chrigel.clusterbrake.statemachine.StateContext;
 import net.chrigel.clusterbrake.statemachine.states.AbstractState;
+import net.chrigel.clusterbrake.statemachine.trigger.MessageTrigger;
 import net.chrigel.clusterbrake.workflow.manualauto.settings.CleanupSettings;
+import net.chrigel.clusterbrake.workflow.manualauto.settings.FinishedJobSettings;
+import org.apache.commons.io.FileExistsException;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 
 /**
  *
@@ -28,12 +34,11 @@ public class CleanupState
     @Inject
     CleanupState(
             StateContext context,
-            JobSettings jobSettings,
+            @FinishedJobSettings JobSettings jobSettings,
             CleanupSettings cleanupSettings
     ) {
         super(context);
         this.jobSettings = jobSettings;
-        this.jobSettings.setSettingsFile(new File(DirTypes.CONFIG.getBase(), "finished.json"));
         this.cleanupSettings = cleanupSettings;
         this.executor = Executors.newSingleThreadExecutor();
     }
@@ -54,42 +59,44 @@ public class CleanupState
             jobs.add(finishedJob);
         }
         File temp = finishedJob.getVideoPackage().getOutputFile().getFullPath();
-        DirType outputType = finishedJob.getVideoPackage().getOutputFile().getType();
-        finishedJob.getVideoPackage().getOutputFile().setDirType(convertOutputMode(outputType));
+        finishedJob.getVideoPackage().getOutputFile().setDirType(DirTypes.OUTPUT);
         File finalOutput = finishedJob.getVideoPackage().getOutputFile().getFullPath();
         jobSettings.setJobs(jobs);
         if (cleanupSettings.isAsyncMoveEnabled()) {
             executor.submit(() -> {
                 moveFile(temp, finalOutput);
+                cleanDir();
             });
         } else {
             moveFile(temp, finalOutput);
+            cleanDir();
         }
 
+        fireStateTrigger(new MessageTrigger(String.format("Finished job %1$s", source.getPath())));
     }
 
     private void moveFile(File from, File to) {
-
-        logger.info("Moving file {} to {}", from, to);
+        File dest = to;
+        if (to.exists()) {
+            File parent = to.getParentFile();
+            String fileName = to.getName();
+            String extension = FilenameUtils.getExtension(fileName);
+            String newfileName = fileName + new SimpleDateFormat("yyyy-MM-dd-hh-mm").format(new Date()) + extension;
+            dest = new File(parent, newfileName);
+        }
+        logger.info("Moving file {} to {}", from, dest);
         try {
-            FileUtils.moveFile(from, to);
+            FileUtils.moveFile(from, dest);
         } catch (IOException ex) {
             logger.error(ex);
         }
     }
 
-    private DirType convertOutputMode(DirType type) {
-        if (type instanceof DirTypes) {
-            switch ((DirTypes) type) {
-                case INPUT_AUTO:
-                    return DirTypes.OUTPUT_AUTO;
-                case INPUT_MANUAL:
-                    return DirTypes.OUTPUT_MANUAL;
-                default:
-                    return DirTypes.OUTPUT;
-            }
-        } else {
-            return DirTypes.OUTPUT;
+    private void cleanDir() {
+        try {
+            FileUtils.cleanDirectory(DirTypes.TEMP.getBase());
+        } catch (IOException ex) {
+            logger.warn(ex);
         }
     }
 

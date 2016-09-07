@@ -14,6 +14,7 @@ import net.chrigel.clusterbrake.statemachine.StateContext;
 import net.chrigel.clusterbrake.statemachine.trigger.GenericCollectionTrigger;
 import net.chrigel.clusterbrake.workflow.manualauto.settings.InputSettings;
 import net.chrigel.clusterbrake.workflow.manualauto.settings.OptionDirVideoPair;
+import net.chrigel.clusterbrake.workflow.manualauto.triggers.NoResultTrigger;
 
 /**
  *
@@ -54,8 +55,13 @@ public class ScanManualInputDirState
                 logger.warn(ex);
             }
         });
-        fireStateTrigger(new GenericCollectionTrigger(pairList));
-
+        if (pairList.parallelStream().noneMatch(pair -> {
+            return !pair.getVideoList().isEmpty();
+        })) {
+            fireStateTrigger(new NoResultTrigger());
+        } else {
+            fireStateTrigger(new GenericCollectionTrigger(pairList));
+        }
     }
 
     private List<File> getOptionDirs(File baseDir) {

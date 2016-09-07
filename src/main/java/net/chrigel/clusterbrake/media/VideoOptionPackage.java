@@ -11,8 +11,4 @@ public interface VideoOptionPackage {
 
     void setOptions(List<String> options);
 
-    FileContainer getOptionFile();
-    
-    void setOptionFile(FileContainer file);
-
 }

@@ -10,7 +10,7 @@ import net.chrigel.clusterbrake.settings.NodeSettings;
 public class NodeSettingsImpl
         implements NodeSettings {
 
-    private String nodeID;
+    private final String nodeID;
 
     @Inject
     NodeSettingsImpl(
@@ -23,10 +23,4 @@ public class NodeSettingsImpl
     public String getNodeID() {
         return nodeID;
     }
-
-    @Override
-    public void setNodeID(String id) {
-        this.nodeID = id;
-    }
-
 }

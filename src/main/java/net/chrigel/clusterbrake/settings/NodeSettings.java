@@ -7,6 +7,4 @@ public interface NodeSettings {
 
     String getNodeID();
 
-    void setNodeID(String id);
-
 }

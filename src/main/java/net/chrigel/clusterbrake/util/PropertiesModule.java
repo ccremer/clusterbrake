@@ -1,4 +1,4 @@
-package net.chrigel.clusterbrake.settings;
+package net.chrigel.clusterbrake.util;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.name.Names;
@@ -12,7 +12,6 @@ import java.util.Properties;
 public class PropertiesModule extends AbstractModule {
 
     private final String fileName;
-    private Properties properties;
 
     /**
      * Creates the module with the specified file name. The properties will be loaded via
@@ -26,9 +25,9 @@ public class PropertiesModule extends AbstractModule {
 
     @Override
     protected final void configure() {
-        properties = new Properties();
-        try {
-            properties.load(new FileInputStream(fileName));
+        Properties properties = new Properties();
+        try (FileInputStream stream = new FileInputStream(fileName)) {
+            properties.load(stream);
             Names.bindProperties(binder(), properties);
         } catch (Exception ex) {
             addError(new Message("Could not load properties file: " + fileName, ex));

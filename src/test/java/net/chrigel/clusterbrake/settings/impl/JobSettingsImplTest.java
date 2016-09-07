@@ -37,15 +37,6 @@ public class JobSettingsImplTest {
     }
 
     @Test
-    public void testGetQueueSettingsFile() {
-        File queueFile = new File(testBaseDir, "queue.json");
-        subject = new JobSettingsImpl(new DirTypeConverter());
-        subject.setSettingsFile(queueFile);
-
-        assertThat(subject.getSettingsFile(), equalTo(queueFile));
-    }
-
-    @Test
     public void testSerializeDeserialize() throws IOException {
         File queueFile = new File(testBaseDir, "queue.json");
         FileContainer outputContainer = new FileContainer(DirTypes.OUTPUT_MANUAL, "movie.mp4");
