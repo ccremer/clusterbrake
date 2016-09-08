@@ -29,6 +29,7 @@ public class WorkflowInitialState
 
         File inputFolder = new File(inputDir);
         File outputFolder = new File(outputDir);
+        File configFolder = new File(configDir);
 
         DirTypes.CONFIG.setDir(new File(configDir));
         DirTypes.INPUT.setDir(inputFolder);
@@ -38,7 +39,7 @@ public class WorkflowInitialState
         DirTypes.OUTPUT_AUTO.setDir(new File(outputFolder, autoInputDir));
         DirTypes.OUTPUT_MANUAL.setDir(new File(outputFolder, manualInputDir));
         DirTypes.TEMP.setDir(new File(tempDir));
-        DirTypes.TEMPLATE.setDir(new File(templateDir));
+        DirTypes.TEMPLATE.setDir(new File(configFolder, templateDir));
     }
 
     @Override
@@ -54,6 +55,7 @@ public class WorkflowInitialState
         if (!DirTypes.OUTPUT.getBase().exists()) {
             logger.error("Output directory does not exist!");
         }
+        DirTypes.TEMP.getBase().mkdirs();
 
         fireStateTrigger(new InitializedStateTrigger());
     }
