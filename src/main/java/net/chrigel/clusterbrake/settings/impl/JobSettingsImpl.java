@@ -62,7 +62,7 @@ public class JobSettingsImpl
             Queue queue = serializer.deserialize(settingsFile);
             return queue.getJobs();
         } catch (IOException ex) {
-            logger.error(ex);
+            logger.warn(ex);
             return new LinkedList<>();
         }
     }

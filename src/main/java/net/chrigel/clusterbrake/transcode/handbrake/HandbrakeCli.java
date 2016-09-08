@@ -127,9 +127,9 @@ public class HandbrakeCli
             });
         }
         list.add("--input");
-        list.add(String.format("\"%1$s\"", source.getAbsolutePath()));
+        list.add(source.getAbsolutePath());
         list.add("--output");
-        list.add(String.format("\"%1$s\"", output.getAbsolutePath()));
+        list.add(output.getAbsolutePath());
         return list;
     }
 
