@@ -22,7 +22,7 @@ class HandbrakeOptionParser
         return lines.parallelStream().map(line -> {
             return line.trim();
         }).filter(line -> {
-            return !line.startsWith("#") || !"".equals(line);
+            return !line.startsWith("#") && !"".equals(line);
         }).collect(Collectors.toList());
     }
 
