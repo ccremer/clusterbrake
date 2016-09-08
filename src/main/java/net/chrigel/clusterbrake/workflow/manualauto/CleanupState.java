@@ -79,9 +79,11 @@ public class CleanupState
         File dest = to;
         if (to.exists()) {
             File parent = to.getParentFile();
-            String fileName = to.getName();
+            String fileName = FilenameUtils.removeExtension(to.getName());
             String extension = FilenameUtils.getExtension(fileName);
-            String newfileName = fileName + new SimpleDateFormat("yyyy-MM-dd-hh-mm").format(new Date()) + extension;
+            String newfileName = fileName + "."
+                    + new SimpleDateFormat("yyyy-MM-dd-hh-mm").format(new Date())
+                    + "." + extension;
             dest = new File(parent, newfileName);
         }
         logger.info("Moving file {} to {}", from, dest);

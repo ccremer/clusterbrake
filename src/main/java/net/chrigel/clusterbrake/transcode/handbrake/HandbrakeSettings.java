@@ -7,14 +7,14 @@ import net.chrigel.clusterbrake.transcode.TranscoderSettings;
 /**
  *
  */
-class TranscoderSettingsImpl
+class HandbrakeSettings
         implements TranscoderSettings {
 
     private final String cliPath;
     private final boolean redirectIO;
 
     @Inject
-    TranscoderSettingsImpl(
+    HandbrakeSettings(
             @Named("node.cli.path") String cliPath,
             @Named("node.cli.redirectIO") boolean redirectIO
     ) {

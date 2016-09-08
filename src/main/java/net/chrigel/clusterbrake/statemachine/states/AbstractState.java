@@ -9,6 +9,8 @@ import net.chrigel.clusterbrake.statemachine.StateContext;
 import net.chrigel.clusterbrake.statemachine.Trigger;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
 
 /**
  * Provides a base class for states.
@@ -20,9 +22,11 @@ public abstract class AbstractState
     private final StateContext context;
     protected final Logger logger;
     private final Map<Class<? extends Trigger>, StateTriggerPair> conditionalMap;
+    private final Marker marker;
 
     public AbstractState(StateContext context) {
         this.logger = LogManager.getLogger(getClass());
+        this.marker = MarkerManager.getMarker("StateMachine");
         this.isActive = new AtomicBoolean();
         this.context = context;
         this.conditionalMap = new HashMap<>();
@@ -64,14 +68,14 @@ public abstract class AbstractState
     @Override
     public final void enter() {
         isActive.set(true);
-        logger.debug("Entering {}.", this);
+        logger.debug(marker, "Entering {}.", this);
         enterState();
     }
 
     @Override
     public final void exit() {
         exitState();
-        logger.debug("Exiting {}.", this);
+        logger.debug(marker, "Exiting {}.", this);
         isActive.set(false);
     }
 
@@ -105,7 +109,8 @@ public abstract class AbstractState
             }
             changeStateTo(pair.getState());
         } else {
-            logger.error("Conditional wanted to change state, but there is no subsequent state defined for {}.",
+            logger.error(marker,
+                    "State context wanted to change state, but there is no subsequent state defined for {}.",
                     trigger.getClass());
         }
     }
@@ -114,7 +119,7 @@ public abstract class AbstractState
         if (isActive.get()) {
             context.setState(state);
         } else {
-            logger.warn("Tried changing state while being inactive!");
+            logger.warn(marker, "Tried changing state while being inactive!");
         }
     }
 

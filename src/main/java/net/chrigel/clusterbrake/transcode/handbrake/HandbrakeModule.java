@@ -16,7 +16,7 @@ public class HandbrakeModule
     @Override
     protected void configure() {
         bind(Transcoder.class).to(HandbrakeCli.class).in(Singleton.class);
-        bind(TranscoderSettings.class).to(TranscoderSettingsImpl.class);
+        bind(TranscoderSettings.class).to(HandbrakeSettings.class);
 
         bind(OptionsFileParser.class).to(HandbrakeOptionParser.class);
         bind(VideoOptionPackage.class).to(HandbrakeOptionPackage.class);

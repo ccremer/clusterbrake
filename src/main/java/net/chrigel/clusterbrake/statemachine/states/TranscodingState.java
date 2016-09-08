@@ -22,7 +22,7 @@ public class TranscodingState
     private Job job;
 
     @Inject
-    public TranscodingState(
+    TranscodingState(
             StateContext context,
             Provider<Transcoder> transcoderProvider
     ) {
@@ -40,7 +40,7 @@ public class TranscodingState
             job.setStartTime(LocalDateTime.now(Clock.systemDefaultZone()));
             job.getVideoPackage().getOutputFile().getFullPath().getParentFile().mkdirs();
             currentTranscoder = transcoderProvider.get();
-            logger.info("Begining transcode...");
+            logger.info("Beginning transcode...");
             int returnValue = currentTranscoder
                     .from(job.getVideoPackage().getVideo().getSourceFile().getFullPath())
                     .to(job.getVideoPackage().getOutputFile().getFullPath())
@@ -52,13 +52,11 @@ public class TranscodingState
                 job.setFinishTime(LocalDateTime.now(Clock.systemDefaultZone()));
                 fireStateTrigger(new TranscodingFinishedTrigger(job));
             } else {
-                logger.error("Transcoder exited with code {}", returnValue);
                 fireStateTrigger(new ExceptionTrigger("Transcoder exited with code " + returnValue));
             }
 
         } catch (InterruptedException | IOException ex) {
-            logger.error("Could not transcode file.", ex);
-            fireStateTrigger(new ExceptionTrigger(ex));
+            fireStateTrigger(new ExceptionTrigger("Could not transcode file.", ex));
         }
     }
 

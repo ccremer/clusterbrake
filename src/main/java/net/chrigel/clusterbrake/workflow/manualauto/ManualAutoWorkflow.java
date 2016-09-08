@@ -15,6 +15,7 @@ import net.chrigel.clusterbrake.statemachine.trigger.GenericCollectionTrigger;
 import net.chrigel.clusterbrake.statemachine.trigger.InitializedStateTrigger;
 import net.chrigel.clusterbrake.statemachine.trigger.MessageTrigger;
 import net.chrigel.clusterbrake.statemachine.trigger.QueueResultTrigger;
+import net.chrigel.clusterbrake.statemachine.trigger.ScheduledActionTrigger;
 import net.chrigel.clusterbrake.statemachine.trigger.TranscodingFinishedTrigger;
 import net.chrigel.clusterbrake.workflow.AbstractStateContext;
 import net.chrigel.clusterbrake.workflow.manualauto.settings.OptionDirVideoPair;
@@ -89,6 +90,9 @@ public class ManualAutoWorkflow
         // queue select [no result found] --> schedule next scan
         queueSelectState.bindNextStateToTrigger(schedulerState, MessageTrigger.class);
 
+        // after some minutes --> manual scan
+        schedulerState.bindNextStateToTrigger(scanManualInputState, ScheduledActionTrigger.class);
+        
         // queue select [result found] --> transcode
         queueSelectState.bindNextStateToTrigger(transcodingState, QueueResultTrigger.class, trigger -> {
             transcodingState.setJob(trigger.getPayload());
@@ -98,6 +102,7 @@ public class ManualAutoWorkflow
         // transcoding finished --> cleanup
         transcodingState.bindNextStateToTrigger(cleanupState, TranscodingFinishedTrigger.class, trigger -> {
             cleanupState.setFinishedJob(trigger.getPayload());
+            queueSelectState.clearQueue();
             return null;
         });
 

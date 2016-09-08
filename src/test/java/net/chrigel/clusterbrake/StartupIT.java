@@ -26,16 +26,16 @@ public class StartupIT {
     @After
     public void after() throws IOException {
         FileUtils.deleteDirectory(TEST_BASE_DIR);
+        new File("target/config/finished.json").delete();
+        new File("target/config/queue.json").delete();
     }
 
-    @Test
+ //   @Test
     public void testManaualTranscode() throws Exception {
 
         DirTypes.INPUT_AUTO.getBase().mkdirs();
         DirTypes.INPUT_MANUAL.getBase().mkdirs();
         DirTypes.TEMPLATE.getBase().mkdirs();
-     //   DirTypes.OUTPUT_MANUAL.getBase().mkdirs();
-     //   DirTypes.OUTPUT_AUTO.getBase().mkdirs();
         FileUtils.copyFile(testSource, new File(DirTypes.INPUT_MANUAL.getBase(), "test/testsample.mp4"));
         FileUtils.copyFile(
                 new File(TestUtility.getTestResourcesDir(), "test.conf"),
@@ -46,4 +46,19 @@ public class StartupIT {
         Thread.sleep(1000000000);
     }
 
+    @Test
+    public void testAutoTranscode() throws Exception {
+
+        DirTypes.INPUT_AUTO.getBase().mkdirs();
+        DirTypes.INPUT_MANUAL.getBase().mkdirs();
+        DirTypes.TEMPLATE.getBase().mkdirs();
+        FileUtils.copyFile(testSource, new File(DirTypes.INPUT_AUTO.getBase(), "folder/testsample.mp4"));
+        FileUtils.copyFile(
+                new File(TestUtility.getTestResourcesDir(), "test.conf"),
+                new File(DirTypes.TEMPLATE.getBase(), "auto.conf"));
+
+        Startup.main(new String[]{"target/clusterbrake.properties"});
+
+        Thread.sleep(1000000000);
+    }
 }
