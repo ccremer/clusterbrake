@@ -13,22 +13,22 @@ Well,
 then this might be for you.
 
 ## What does it?
-It picks video files from a watch folder and transcodes them into a new format based on a template. Transcoding does not happen with 
-this software, but instead relies on a 3rd party software like handbrake. ffmpeg would probably work too.
+It picks video files from a watch folder and transcodes them into a new format based on a template. Transcoding does not happen with this software, but instead relies on a 3rd party software like handbrake. ffmpeg would probably work too.
 
 
-# Features planned
+# Features
 * Watch folder for automatic encoding. All files will have a unified output format
-* Drop zone for manual encoding. Manual encoding is just a means for when the custom output format is specified by yourself (like an override)
-* Multiple Machines (Nodes) can encode. They will distribute the jobs so that no node encodes the same file as another one. A shared storage is needed
-  for that feature (e.g. NFS, Gluster, CIFS, etc). Buy some Raspberry Pi's and happily transcode your library ;)
-* Templates for settings
+* Multiple Machines (Nodes) can encode. They will distribute the jobs so that no node encodes the same file as another one. A shared storage is needed for that feature (e.g. NFS, Gluster, CIFS, etc). Buy some Raspberry Pi's and happily transcode your library ;)
+* Templates for handbrake settings
 * A Docker image for easy install and setup.
 * File-based configuration (at least for now). No database needed.
-* Constraints for a single Node. Following constraints are planned:
+* Constraints for a single Node. Following constraints are available:
   * Time-Window: E.g. Only transcode during the night
   * File size: If a video is very big, a Raspberry Pi might take a very long time. Leave the job for another server with more processing power.
 
 # Project status
 This project is currently under heavy development (2016-09-06).
-After a release which will work in my personal environment, maintenance will be limited. If you encounter a bug, open an issue, but I won't promise a fix.
+After the release maintenance will be limited. If you encounter a bug, open an issue, but I won't promise a fix.
+
+# How exactly does it work?
+Head over to the wiki and see the default workflow for yourself
