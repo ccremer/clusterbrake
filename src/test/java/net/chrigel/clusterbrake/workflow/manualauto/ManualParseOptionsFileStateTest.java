@@ -15,6 +15,7 @@ import net.chrigel.clusterbrake.media.VideoOptionPackage;
 import net.chrigel.clusterbrake.media.VideoPackage;
 import net.chrigel.clusterbrake.statemachine.StateContext;
 import net.chrigel.clusterbrake.statemachine.trigger.GenericCollectionTrigger;
+import net.chrigel.clusterbrake.transcode.TranscoderSettings;
 import net.chrigel.clusterbrake.workflow.manualauto.settings.OptionDirVideoPair;
 import org.apache.commons.io.FileUtils;
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -48,6 +49,8 @@ public class ManualParseOptionsFileStateTest {
     private VideoPackage videoPackage;
     @Mock
     private Video video;
+    @Mock
+    private TranscoderSettings transcoderSettings;
 
     @Before
     public void setup() throws IOException {
@@ -60,6 +63,7 @@ public class ManualParseOptionsFileStateTest {
         when(optionPackageProvider.get()).thenReturn(optionPackage);
         when(optionParserProvider.get()).thenReturn(parser);
         when(videoPackageProvider.get()).thenReturn(videoPackage);
+        when(transcoderSettings.getOptionsFileExtension()).thenReturn("handbrake");
     }
 
     private static final File TEST_BASE_DIR = TestUtility.getTestDir();
@@ -71,7 +75,7 @@ public class ManualParseOptionsFileStateTest {
 
     private ManualParseOptionsFileState createSubject() {
         return new ManualParseOptionsFileState(context, optionPackageProvider,
-                optionParserProvider, videoPackageProvider);
+                optionParserProvider, videoPackageProvider, transcoderSettings);
     }
 
     @Test
@@ -82,7 +86,7 @@ public class ManualParseOptionsFileStateTest {
             isCalled.set(true);
             return null;
         });
-        FileContainer optionContainer = new FileContainer(DirTypes.TEMPLATE, "option1d.conf");
+        FileContainer optionContainer = new FileContainer(DirTypes.TEMPLATE, "option1d.handbrake");
         File optionDir = new File(TEST_BASE_DIR, "option1d");
 
         optionDir.mkdir();

@@ -40,8 +40,8 @@ public class StartupIT {
         DirTypes.SCRIPT.getBase().mkdirs();
         FileUtils.copyFile(testSource, new File(DirTypes.INPUT_MANUAL.getBase(), "test/testsample.mp4"));
         FileUtils.copyFile(
-                new File(TestUtility.getTestResourcesDir(), "test.conf"),
-                new File(DirTypes.TEMPLATE.getBase(), "test.conf"));
+                new File(TestUtility.getTestResourcesDir(), "test.handbrake"),
+                new File(DirTypes.TEMPLATE.getBase(), "test.handbrake"));
         FileUtils.writeLines(new File(DirTypes.SCRIPT.getBase(), "postQueue.cmd"), Arrays.asList("echo manual"));
 
         Startup.main(new String[]{"target/clusterbrake.properties"});
@@ -58,8 +58,8 @@ public class StartupIT {
         DirTypes.SCRIPT.getBase().mkdirs();
         FileUtils.copyFile(testSource, new File(DirTypes.INPUT_AUTO.getBase(), "folder/testsample.mp4"));
         FileUtils.copyFile(
-                new File(TestUtility.getTestResourcesDir(), "test.conf"),
-                new File(DirTypes.TEMPLATE.getBase(), "auto.conf"));
+                new File(TestUtility.getTestResourcesDir(), "test.handbrake"),
+                new File(DirTypes.TEMPLATE.getBase(), "auto.handbrake"));
         FileUtils.writeLines(new File(DirTypes.SCRIPT.getBase(), "postQueue.cmd"), Arrays.asList("echo auto"));
         FileUtils.writeLines(new File(DirTypes.SCRIPT.getBase(), "postCleanup.cmd"), Arrays.asList("echo postCleanup"));
 

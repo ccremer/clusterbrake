@@ -14,6 +14,7 @@ import net.chrigel.clusterbrake.media.VideoOptionPackage;
 import net.chrigel.clusterbrake.media.VideoPackage;
 import net.chrigel.clusterbrake.statemachine.StateContext;
 import net.chrigel.clusterbrake.statemachine.trigger.GenericCollectionTrigger;
+import net.chrigel.clusterbrake.transcode.TranscoderSettings;
 import net.chrigel.clusterbrake.workflow.manualauto.settings.OptionDirVideoPair;
 
 /**
@@ -23,15 +24,18 @@ class ManualParseOptionsFileState
         extends AbstractOptionParseState {
 
     private List<OptionDirVideoPair> list;
+    private final TranscoderSettings transcoderSettings;
 
     @Inject
     ManualParseOptionsFileState(
             StateContext context,
             Provider<VideoOptionPackage> optionPackageProvider,
             Provider<OptionsFileParser> optionParserProvider,
-            Provider<VideoPackage> videoPackageProvider
+            Provider<VideoPackage> videoPackageProvider,
+            TranscoderSettings transcoderSettings
     ) {
         super(context, optionPackageProvider, optionParserProvider, videoPackageProvider);
+        this.transcoderSettings = transcoderSettings;
     }
 
     public void setOptionDirList(List<OptionDirVideoPair> list) {
@@ -49,7 +53,7 @@ class ManualParseOptionsFileState
             try {
                 FileContainer templateContainer = new FileContainer(
                         DirTypes.TEMPLATE,
-                        new File(pair.getOptionDir().getName() + ".conf"));
+                        new File(pair.getOptionDir().getName() + "." + transcoderSettings.getOptionsFileExtension()));
                 if (templateContainer.getFullPath().exists()) {
                     packageList.addAll(
                             applyOptionsTemplate(

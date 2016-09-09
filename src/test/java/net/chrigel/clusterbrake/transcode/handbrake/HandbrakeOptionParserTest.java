@@ -41,7 +41,7 @@ public class HandbrakeOptionParserTest {
     @Test
     public void testParseFile_ShouldParseFileCorrectly() throws Exception {
 
-        File optionFile = new File(TEST_BASE_DIR, "options.conf");
+        File optionFile = new File(TEST_BASE_DIR, "options.handbrake");
 
         List<String> lines = new LinkedList<>();
         lines.add("--encoder x265 ");

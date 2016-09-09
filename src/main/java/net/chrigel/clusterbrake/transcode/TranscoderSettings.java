@@ -8,5 +8,7 @@ public interface TranscoderSettings {
     String getCLIPath();
 
     boolean isIORedirected();
+    
+    String getOptionsFileExtension();
 
 }

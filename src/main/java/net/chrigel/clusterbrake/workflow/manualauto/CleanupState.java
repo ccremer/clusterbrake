@@ -8,7 +8,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import net.chrigel.clusterbrake.media.DirType;
 import net.chrigel.clusterbrake.settings.Job;
 import net.chrigel.clusterbrake.settings.JobSettings;
 import net.chrigel.clusterbrake.statemachine.StateContext;
@@ -16,7 +15,6 @@ import net.chrigel.clusterbrake.statemachine.states.AbstractState;
 import net.chrigel.clusterbrake.statemachine.trigger.MessageTrigger;
 import net.chrigel.clusterbrake.workflow.manualauto.settings.CleanupSettings;
 import net.chrigel.clusterbrake.workflow.manualauto.settings.FinishedJobSettings;
-import org.apache.commons.io.FileExistsException;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 

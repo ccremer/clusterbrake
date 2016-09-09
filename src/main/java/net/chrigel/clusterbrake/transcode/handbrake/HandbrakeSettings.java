@@ -32,4 +32,9 @@ class HandbrakeSettings
         return redirectIO;
     }
 
+    @Override
+    public String getOptionsFileExtension() {
+        return "handbrake";
+    }
+
 }
