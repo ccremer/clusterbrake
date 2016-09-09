@@ -142,7 +142,7 @@ public class QueueSelectState
                 output = new File(output.getParentFile(), newFileName);
             }
         }
-        return new FileContainer(DirTypes.TEMP, output);
+        return new FileContainer(DirTypes.TMP, output);
     }
 
     @Override

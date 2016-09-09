@@ -15,6 +15,7 @@ import net.chrigel.clusterbrake.workflow.manualauto.settings.FinishedJobSettings
 import net.chrigel.clusterbrake.workflow.manualauto.settings.InputSettings;
 import net.chrigel.clusterbrake.workflow.manualauto.settings.OutputSettings;
 import net.chrigel.clusterbrake.workflow.manualauto.settings.QueueSettings;
+import net.chrigel.clusterbrake.workflow.manualauto.settings.WorkflowScriptSettings;
 import net.chrigel.clusterbrake.workflow.manualauto.settings.WorkflowTemplateSettings;
 
 /**
@@ -28,6 +29,7 @@ public class WorkflowSettingsModule
         bind(InputSettings.class).to(InputSettingsImpl.class);
         bind(SchedulerSettings.class).to(SchedulerSettingsImpl.class);
         bind(WorkflowTemplateSettings.class).to(WorkflowTemplateSettingsImpl.class);
+        bind(WorkflowScriptSettings.class).to(WorkflowScriptSettingsImpl.class);
         bind(CleanupSettings.class).to(CleanupSettingsImpl.class);
         bind(OutputSettings.class).to(OutputSettingsImpl.class);
         bind(new TypeLiteral<Converter<DirType>>() {

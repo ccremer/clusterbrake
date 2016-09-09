@@ -96,7 +96,7 @@ public class CleanupState
 
     private void cleanDir() {
         try {
-            FileUtils.cleanDirectory(DirTypes.TEMP.getBase());
+            FileUtils.cleanDirectory(DirTypes.TMP.getBase());
         } catch (IOException ex) {
             logger.warn(ex);
         }

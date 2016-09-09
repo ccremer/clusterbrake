@@ -2,6 +2,7 @@ package net.chrigel.clusterbrake;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import net.chrigel.clusterbrake.workflow.manualauto.DirTypes;
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
@@ -30,16 +31,18 @@ public class StartupIT {
         new File("target/config/queue.json").delete();
     }
 
- //   @Test
+    //  @Test
     public void testManaualTranscode() throws Exception {
 
         DirTypes.INPUT_AUTO.getBase().mkdirs();
         DirTypes.INPUT_MANUAL.getBase().mkdirs();
         DirTypes.TEMPLATE.getBase().mkdirs();
+        DirTypes.SCRIPT.getBase().mkdirs();
         FileUtils.copyFile(testSource, new File(DirTypes.INPUT_MANUAL.getBase(), "test/testsample.mp4"));
         FileUtils.copyFile(
                 new File(TestUtility.getTestResourcesDir(), "test.conf"),
                 new File(DirTypes.TEMPLATE.getBase(), "test.conf"));
+        FileUtils.writeLines(new File(DirTypes.SCRIPT.getBase(), "postQueue.cmd"), Arrays.asList("echo manual"));
 
         Startup.main(new String[]{"target/clusterbrake.properties"});
 
@@ -52,10 +55,13 @@ public class StartupIT {
         DirTypes.INPUT_AUTO.getBase().mkdirs();
         DirTypes.INPUT_MANUAL.getBase().mkdirs();
         DirTypes.TEMPLATE.getBase().mkdirs();
+        DirTypes.SCRIPT.getBase().mkdirs();
         FileUtils.copyFile(testSource, new File(DirTypes.INPUT_AUTO.getBase(), "folder/testsample.mp4"));
         FileUtils.copyFile(
                 new File(TestUtility.getTestResourcesDir(), "test.conf"),
                 new File(DirTypes.TEMPLATE.getBase(), "auto.conf"));
+        FileUtils.writeLines(new File(DirTypes.SCRIPT.getBase(), "postQueue.cmd"), Arrays.asList("echo auto"));
+        FileUtils.writeLines(new File(DirTypes.SCRIPT.getBase(), "postCleanup.cmd"), Arrays.asList("echo postCleanup"));
 
         Startup.main(new String[]{"target/clusterbrake.properties"});
 

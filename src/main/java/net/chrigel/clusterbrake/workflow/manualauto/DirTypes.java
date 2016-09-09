@@ -17,7 +17,8 @@ public enum DirTypes
     OUTPUT_MANUAL,
     CONFIG,
     TEMPLATE,
-    TEMP;
+    TMP,
+    SCRIPT;
 
     private File dir;
 

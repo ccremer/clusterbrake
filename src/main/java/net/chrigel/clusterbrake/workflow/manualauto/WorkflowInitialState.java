@@ -23,7 +23,8 @@ public class WorkflowInitialState
             @Named("dir.templates") String templateDir,
             @Named("workflow.queue.dir.temp") String tempDir,
             @Named("workflow.input.dir.auto") String autoInputDir,
-            @Named("workflow.input.dir.manual") String manualInputDir
+            @Named("workflow.input.dir.manual") String manualInputDir,
+            @Named("workflow.script.dir") String scriptDir
     ) {
         super(context);
 
@@ -38,8 +39,9 @@ public class WorkflowInitialState
         DirTypes.OUTPUT.setDir(outputFolder);
         DirTypes.OUTPUT_AUTO.setDir(new File(outputFolder, autoInputDir));
         DirTypes.OUTPUT_MANUAL.setDir(new File(outputFolder, manualInputDir));
-        DirTypes.TEMP.setDir(new File(tempDir));
+        DirTypes.TMP.setDir(new File(tempDir));
         DirTypes.TEMPLATE.setDir(new File(configFolder, templateDir));
+        DirTypes.SCRIPT.setDir(new File(scriptDir));
     }
 
     @Override
@@ -55,7 +57,7 @@ public class WorkflowInitialState
         if (!DirTypes.OUTPUT.getBase().exists()) {
             logger.error("Output directory does not exist!");
         }
-        DirTypes.TEMP.getBase().mkdirs();
+        DirTypes.TMP.getBase().mkdirs();
 
         fireStateTrigger(new InitializedStateTrigger());
     }
