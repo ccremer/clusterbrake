@@ -1,10 +1,13 @@
 package net.chrigel.clusterbrake.transcode.handbrake;
 
+import com.google.inject.Provider;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.LinkedList;
 import java.util.List;
 import net.chrigel.clusterbrake.TestUtility;
+import net.chrigel.clusterbrake.process.ExternalProcess;
+import net.chrigel.clusterbrake.process.impl.ExternalProcessImpl;
 import net.chrigel.clusterbrake.transcode.TranscoderSettings;
 import org.junit.Test;
 import org.junit.Before;
@@ -16,6 +19,8 @@ public class HandbrakeCliIT {
 
     @Mock
     private TranscoderSettings settings;
+    @Mock
+    private Provider<ExternalProcess> processProvider;
 
     private HandbrakeCli subject;
 
@@ -24,7 +29,8 @@ public class HandbrakeCliIT {
         MockitoAnnotations.initMocks(this);
         when(settings.getCLIPath()).thenReturn("C:\\Program Files\\Handbrake\\HandBrakeCLI.exe");
         when(settings.isIORedirected()).thenReturn(true);
-        subject = new HandbrakeCli(settings);
+        when(processProvider.get()).thenReturn(new ExternalProcessImpl());
+        subject = new HandbrakeCli(settings, processProvider);
     }
 
     @Test

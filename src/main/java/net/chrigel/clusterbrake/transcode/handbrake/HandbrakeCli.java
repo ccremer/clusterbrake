@@ -1,6 +1,7 @@
 package net.chrigel.clusterbrake.transcode.handbrake;
 
 import com.google.inject.Inject;
+import com.google.inject.Provider;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -9,6 +10,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
+import net.chrigel.clusterbrake.process.ExternalProcess;
 import net.chrigel.clusterbrake.transcode.Transcoder;
 import net.chrigel.clusterbrake.transcode.TranscoderSettings;
 import org.apache.logging.log4j.LogManager;
@@ -25,15 +27,20 @@ public class HandbrakeCli
     private List<String> arguments;
     private final Logger logger;
     private TranscoderSettings settings;
-    private Process process;
+    private final Provider<ExternalProcess> processProvider;
+    private ExternalProcess process;
 
     @Inject
-    HandbrakeCli(TranscoderSettings settings) throws FileNotFoundException {
+    HandbrakeCli(
+            TranscoderSettings settings,
+            Provider<ExternalProcess> processProvider
+    ) throws FileNotFoundException {
         if (!new File(settings.getCLIPath()).exists()) {
             throw new FileNotFoundException(settings.getCLIPath());
         }
         this.settings = settings;
         this.logger = LogManager.getLogger(getClass());
+        this.processProvider = processProvider;
     }
 
     @Override
@@ -64,28 +71,22 @@ public class HandbrakeCli
     public int transcode() throws InterruptedException, IOException {
         Objects.requireNonNull(source, "Input is not specified");
         Objects.requireNonNull(output, "Output is not specified");
-        this.arguments = addOptionsToArguments(arguments);
-        ProcessBuilder processBuilder = new ProcessBuilder(arguments);
-        if (settings.isIORedirected()) {
-            processBuilder.inheritIO();
-        } else {
-            // This is necessary. Otherwise waitFor() will be deadlocked even if transcoding finished hours ago.
-            processBuilder.redirectError(ProcessBuilder.Redirect.appendTo(new File("NUL:")));
-            processBuilder.redirectOutput(ProcessBuilder.Redirect.appendTo(new File("NUL:")));
-        }
-        logger.info("Invoking Handbrake: {}", parseArguments(arguments));
-        this.process = processBuilder.start();
-        return this.process.waitFor();
+        Objects.requireNonNull(arguments, "Arguments not specified");
+        this.process = processProvider.get();
+        return process
+                .withIORedirected(settings.isIORedirected())
+                .withPath(settings.getCLIPath())
+                .withArguments(addOptionsToArguments(arguments))
+                .start();
     }
 
     @Override
     public void abort() {
         if (process != null) {
             try {
-                process.destroyForcibly();
-                process.waitFor(1, TimeUnit.MINUTES);
+                process.destroy(1, TimeUnit.MINUTES);
             } catch (InterruptedException ex) {
-                logger.warn("Could not destroy child process: {}", ex);
+                logger.warn(ex);
             }
         }
     }
@@ -116,30 +117,17 @@ public class HandbrakeCli
 
     private List<String> addOptionsToArguments(List<String> options) {
         List<String> list = new LinkedList<>();
-        list.add(settings.getCLIPath());
-        if (options != null) {
-            options.forEach(arg -> {
-                if (arg.contains(" ")) {
-                    list.addAll(Arrays.asList(arg.split(" ", 2)));
-                } else {
-                    list.add(arg);
-                }
-            });
-        }
+        options.forEach(arg -> {
+            if (arg.contains(" ")) {
+                list.addAll(Arrays.asList(arg.split(" ", 2)));
+            } else {
+                list.add(arg);
+            }
+        });
         list.add("--input");
         list.add(source.getAbsolutePath());
         list.add("--output");
         list.add(output.getAbsolutePath());
         return list;
     }
-
-    private String parseArguments(List<String> arguments) {
-        StringBuilder builder = new StringBuilder();
-        arguments.forEach(arg -> {
-            builder.append(arg);
-            builder.append(' ');
-        });
-        return builder.toString();
-    }
-
 }

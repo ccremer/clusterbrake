@@ -1,10 +1,14 @@
 package net.chrigel.clusterbrake.statemachine.states;
 
+import com.google.inject.Provider;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicBoolean;
 import net.chrigel.clusterbrake.TestUtility;
+import net.chrigel.clusterbrake.process.ExternalProcess;
+import net.chrigel.clusterbrake.process.impl.ExternalProcessImpl;
+import net.chrigel.clusterbrake.process.impl.AutoResolvableInterpreter;
 import net.chrigel.clusterbrake.statemachine.StateContext;
 import net.chrigel.clusterbrake.statemachine.trigger.ScriptExecutedTrigger;
 import org.apache.commons.io.FileUtils;
@@ -15,6 +19,7 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.when;
 
 public class ExternalScriptStateTest {
 
@@ -22,13 +27,15 @@ public class ExternalScriptStateTest {
 
     @Mock
     private StateContext context;
+    @Mock
+    private Provider<ExternalProcess> processProvider;
 
     private final File baseDir = TestUtility.getTestDir();
 
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
-
+        when(processProvider.get()).thenReturn(new ExternalProcessImpl());
         subject = createSubject();
     }
 
@@ -38,7 +45,7 @@ public class ExternalScriptStateTest {
     }
 
     private ExternalScriptState createSubject() {
-        return new ExternalScriptState(context);
+        return new ExternalScriptState(context, processProvider, new AutoResolvableInterpreter());
     }
 
     @Test
