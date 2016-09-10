@@ -54,7 +54,7 @@ public class ExternalProcessImpl
             processBuilder.redirectError(ProcessBuilder.Redirect.appendTo(new File("NUL:")));
             processBuilder.redirectOutput(ProcessBuilder.Redirect.appendTo(new File("NUL:")));
         }
-        processBuilder.directory(new File(""));
+        processBuilder.directory(new File("").getAbsoluteFile());
         logger.info("Invoking Program: {}", parseArguments(arguments));
         this.process = processBuilder.start();
         return this.process.waitFor();
