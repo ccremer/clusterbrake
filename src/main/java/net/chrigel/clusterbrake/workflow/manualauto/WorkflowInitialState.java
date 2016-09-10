@@ -41,7 +41,7 @@ public class WorkflowInitialState
         DirTypes.OUTPUT_MANUAL.setDir(new File(outputFolder, manualInputDir));
         DirTypes.TMP.setDir(new File(tempDir));
         DirTypes.TEMPLATE.setDir(new File(configFolder, templateDir));
-        DirTypes.SCRIPT.setDir(new File(scriptDir));
+        DirTypes.SCRIPT.setDir(new File(configFolder, scriptDir));
     }
 
     @Override

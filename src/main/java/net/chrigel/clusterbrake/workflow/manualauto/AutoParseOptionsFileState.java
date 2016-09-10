@@ -8,6 +8,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.List;
+import net.chrigel.clusterbrake.media.FileContainer;
 import net.chrigel.clusterbrake.media.OptionsFileParser;
 import net.chrigel.clusterbrake.media.Video;
 import net.chrigel.clusterbrake.media.VideoOptionPackage;
@@ -15,6 +16,7 @@ import net.chrigel.clusterbrake.media.VideoPackage;
 import net.chrigel.clusterbrake.statemachine.StateContext;
 import net.chrigel.clusterbrake.statemachine.trigger.ExceptionTrigger;
 import net.chrigel.clusterbrake.statemachine.trigger.GenericCollectionTrigger;
+import net.chrigel.clusterbrake.transcode.TranscoderSettings;
 import net.chrigel.clusterbrake.workflow.manualauto.settings.WorkflowTemplateSettings;
 
 /**
@@ -25,6 +27,7 @@ class AutoParseOptionsFileState
 
     private final WorkflowTemplateSettings workflowTemplateSettings;
     private List<Video> videos;
+    private final TranscoderSettings transcoderSettings;
 
     @Inject
     AutoParseOptionsFileState(
@@ -32,10 +35,12 @@ class AutoParseOptionsFileState
             WorkflowTemplateSettings workflowTemplateSettings,
             Provider<VideoOptionPackage> optionPackageProvider,
             Provider<OptionsFileParser> optionParserProvider,
-            Provider<VideoPackage> videoPackageProvider
+            Provider<VideoPackage> videoPackageProvider,
+            TranscoderSettings transcoderSettings
     ) {
         super(context, optionPackageProvider, optionParserProvider, videoPackageProvider);
         this.workflowTemplateSettings = workflowTemplateSettings;
+        this.transcoderSettings = transcoderSettings;
     }
 
     public void setVideoList(List<Video> videos) {
@@ -44,7 +49,9 @@ class AutoParseOptionsFileState
 
     @Override
     protected void enterState() {
-        File defaultTemplate = workflowTemplateSettings.getDefaultAutoTemplate().getFullPath();
+        FileContainer container = new FileContainer(DirTypes.TEMPLATE,
+                workflowTemplateSettings.getDefaultAutoTemplate() + "." + transcoderSettings.getOptionsFileExtension());
+        File defaultTemplate = container.getFullPath();
         if (!defaultTemplate.exists()) {
             fireStateTrigger(new ExceptionTrigger(
                     "Default template for auto encoding does not exist!",
@@ -53,7 +60,7 @@ class AutoParseOptionsFileState
         }
         try {
             List<VideoPackage> packageList = applyOptionsTemplate(
-                    workflowTemplateSettings.getDefaultAutoTemplate(),
+                    container,
                     DirTypes.INPUT_AUTO, videos);
             fireStateTrigger(new GenericCollectionTrigger(packageList));
         } catch (IOException | ParseException ex) {
