@@ -26,7 +26,7 @@ public class TestUtility {
         DirTypes.OUTPUT_MANUAL.setDir(new File(outputFolder, "manual"));
         DirTypes.TMP.setDir(new File("test/tmp"));
         DirTypes.TEMPLATE.setDir(new File("target/config/templates"));
-        DirTypes.SCRIPT.setDir(new File("test/scripts"));
+        DirTypes.SCRIPT.setDir(new File("target/config/scripts"));
     }
 
     public static DirType getTestDirType() {

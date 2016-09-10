@@ -10,6 +10,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
 import net.chrigel.clusterbrake.media.impl.MediaModule;
+import net.chrigel.clusterbrake.process.impl.ProcessModule;
 import net.chrigel.clusterbrake.settings.impl.SettingsModule;
 import net.chrigel.clusterbrake.statemachine.StateContext;
 import org.apache.commons.configuration2.ex.ConfigurationException;
@@ -51,6 +52,7 @@ public class Startup {
         modules.add(new PropertiesModule(workflowConfigFile.getPath()));
         modules.add(new SettingsModule());
         modules.add(new MediaModule());
+        modules.add(new ProcessModule());
         modules.add(getTranscoderModule(nodeConfig));
         modules.add(getWorkflowModule(loadWorkflowConfiguration(nodeConfig, configDir)));
 
