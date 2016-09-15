@@ -27,7 +27,7 @@ It picks video files from a watch folder and transcodes them into a new format b
   * File size: If a video is very big, a Raspberry Pi might take a very long time. Leave the job for another server with more processing power.
 
 # Project status
-This project is currently under critical maintenance only (2016-09-15).
+This project has been developed to work and is working in my personal environment, but it is currently under critical maintenance only (2016-09-15).
 If you encounter a bug, open an issue, but I won't promise a fix.
 
 # How exactly does it work?
