@@ -42,6 +42,9 @@ public class StartupIT {
         FileUtils.copyFile(
                 new File(TestUtility.getTestResourcesDir(), "test.handbrake"),
                 new File(DirTypes.TEMPLATE.getBase(), "test.handbrake"));
+        FileUtils.copyFile(
+                new File(TestUtility.getTestResourcesDir(), "test.handbrake"),
+                new File(DirTypes.TEMPLATE.getBase(), "auto.handbrake"));
         FileUtils.writeLines(new File(DirTypes.SCRIPT.getBase(), "postQueue.cmd"), Arrays.asList("echo manual"));
 
         Startup.main(new String[]{"target/clusterbrake.properties"});

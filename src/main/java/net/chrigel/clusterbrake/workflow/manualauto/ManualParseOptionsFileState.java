@@ -31,10 +31,9 @@ class ManualParseOptionsFileState
             StateContext context,
             Provider<VideoOptionPackage> optionPackageProvider,
             Provider<OptionsFileParser> optionParserProvider,
-            Provider<VideoPackage> videoPackageProvider,
             TranscoderSettings transcoderSettings
     ) {
-        super(context, optionPackageProvider, optionParserProvider, videoPackageProvider);
+        super(context, optionPackageProvider, optionParserProvider);
         this.transcoderSettings = transcoderSettings;
     }
 
@@ -58,7 +57,6 @@ class ManualParseOptionsFileState
                     packageList.addAll(
                             applyOptionsTemplate(
                                     templateContainer,
-                                    DirTypes.INPUT_MANUAL,
                                     pair.getVideoList()));
                 } else {
                     logger.warn("Skipping all files in {} because template file {} does not exist!",

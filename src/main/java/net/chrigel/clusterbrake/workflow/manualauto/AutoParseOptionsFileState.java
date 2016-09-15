@@ -10,7 +10,6 @@ import java.text.ParseException;
 import java.util.List;
 import net.chrigel.clusterbrake.media.FileContainer;
 import net.chrigel.clusterbrake.media.OptionsFileParser;
-import net.chrigel.clusterbrake.media.Video;
 import net.chrigel.clusterbrake.media.VideoOptionPackage;
 import net.chrigel.clusterbrake.media.VideoPackage;
 import net.chrigel.clusterbrake.statemachine.StateContext;
@@ -26,7 +25,7 @@ class AutoParseOptionsFileState
         extends AbstractOptionParseState {
 
     private final WorkflowTemplateSettings workflowTemplateSettings;
-    private List<Video> videos;
+    private List<VideoPackage> videos;
     private final TranscoderSettings transcoderSettings;
 
     @Inject
@@ -35,15 +34,14 @@ class AutoParseOptionsFileState
             WorkflowTemplateSettings workflowTemplateSettings,
             Provider<VideoOptionPackage> optionPackageProvider,
             Provider<OptionsFileParser> optionParserProvider,
-            Provider<VideoPackage> videoPackageProvider,
             TranscoderSettings transcoderSettings
     ) {
-        super(context, optionPackageProvider, optionParserProvider, videoPackageProvider);
+        super(context, optionPackageProvider, optionParserProvider);
         this.workflowTemplateSettings = workflowTemplateSettings;
         this.transcoderSettings = transcoderSettings;
     }
 
-    public void setVideoList(List<Video> videos) {
+    public void setVideoList(List<VideoPackage> videos) {
         this.videos = videos;
     }
 
@@ -60,8 +58,7 @@ class AutoParseOptionsFileState
         }
         try {
             List<VideoPackage> packageList = applyOptionsTemplate(
-                    container,
-                    DirTypes.INPUT_AUTO, videos);
+                    container, videos);
             fireStateTrigger(new GenericCollectionTrigger(packageList));
         } catch (IOException | ParseException ex) {
             fireStateTrigger(new ExceptionTrigger("Could not apply template file.", ex, getClass()));

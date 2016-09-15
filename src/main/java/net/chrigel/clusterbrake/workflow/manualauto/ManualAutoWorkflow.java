@@ -3,7 +3,7 @@ package net.chrigel.clusterbrake.workflow.manualauto;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import java.io.File;
-import net.chrigel.clusterbrake.media.Video;
+import java.util.LinkedList;
 import net.chrigel.clusterbrake.media.VideoPackage;
 import net.chrigel.clusterbrake.settings.SchedulerSettings;
 import net.chrigel.clusterbrake.settings.constraint.FileSizeConstraint;
@@ -75,17 +75,20 @@ public class ManualAutoWorkflow
                 });
 
         // manual video scan [no results found] --> auto video scan
-        scanManualInputState.bindNextStateToTrigger(scanAutoInputState, NoResultTrigger.class);
+        scanManualInputState.bindNextStateToTrigger(scanAutoInputState, NoResultTrigger.class, trigger -> {
+            scanAutoInputState.setVideoList(new LinkedList<>());
+            return null;
+        });
 
         // manual parse options --> select job to queue
-        manualParseOptionsState.bindNextStateToTrigger(queueSelectState, GenericCollectionTrigger.class, trigger -> {
-            queueSelectState.setVideoPackageList(trigger.getList(VideoPackage.class));
+        manualParseOptionsState.bindNextStateToTrigger(scanAutoInputState, GenericCollectionTrigger.class, trigger -> {
+            scanAutoInputState.setVideoList(trigger.getList(VideoPackage.class));
             return null;
         });
 
         // auto video scan --> parse option files
         scanAutoInputState.bindNextStateToTrigger(autoParseOptionsState, GenericCollectionTrigger.class, trigger -> {
-            autoParseOptionsState.setVideoList(trigger.getList(Video.class));
+            autoParseOptionsState.setVideoList(trigger.getList(VideoPackage.class));
             return null;
         });
 
@@ -97,7 +100,7 @@ public class ManualAutoWorkflow
 
         // queue select [no result found] --> schedule next scan
         queueSelectState.bindNextStateToTrigger(schedulerState, MessageTrigger.class);
-
+            
         // after some minutes --> manual scan
         schedulerState.bindNextStateToTrigger(scanManualInputState, ScheduledActionTrigger.class);
 

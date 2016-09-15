@@ -42,7 +42,7 @@ public class TranscodingState
             currentTranscoder = transcoderProvider.get();
             logger.info("Beginning transcode...");
             int returnValue = currentTranscoder
-                    .from(job.getVideoPackage().getVideo().getSourceFile().getFullPath())
+                    .from(job.getVideoPackage().getSourceFile().getFullPath())
                     .to(job.getVideoPackage().getOutputFile().getFullPath())
                     .withOptions(job.getVideoPackage().getSettings().getOptions())
                     .transcode();

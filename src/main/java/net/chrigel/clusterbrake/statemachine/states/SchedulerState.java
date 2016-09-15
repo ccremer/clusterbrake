@@ -39,7 +39,7 @@ public class SchedulerState
     @Override
     protected void enterState() {
         this.executor = Executors.newSingleThreadScheduledExecutor();
-        logger.debug("Scheduling a task in {} {}", settings.getDelay(), settings.getTimeUnit());
+        logger.info("Scheduling task in {} {}", settings.getDelay(), settings.getTimeUnit());
         if (settings.useRepeat()) {
             this.executor.scheduleAtFixedRate(() -> {
                 runTask();

@@ -7,7 +7,7 @@ import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicBoolean;
 import net.chrigel.clusterbrake.TestUtility;
 import net.chrigel.clusterbrake.media.FileScanner;
-import net.chrigel.clusterbrake.media.Video;
+import net.chrigel.clusterbrake.media.VideoPackage;
 import net.chrigel.clusterbrake.media.impl.VideoFileScanner;
 import net.chrigel.clusterbrake.statemachine.StateContext;
 import net.chrigel.clusterbrake.statemachine.trigger.GenericCollectionTrigger;
@@ -26,12 +26,14 @@ public class ScanAutoInputDirStateIT {
 
     @Mock
     private StateContext context;
-
     @Mock
     private InputSettings inputSettings;
-
     @Mock
-    private Provider<FileScanner<Video>> scannerProvider;
+    private Provider<FileScanner<VideoPackage>> scannerProvider;
+    @Mock
+    private Provider<VideoPackage> packageProvider;
+    @Mock
+    private VideoPackage videoPackage;
 
     private ScanAutoInputDirState subject;
 
@@ -40,7 +42,8 @@ public class ScanAutoInputDirStateIT {
         TestUtility.initDirs();
         DirTypes.INPUT_AUTO.getBase().mkdirs();
         MockitoAnnotations.initMocks(this);
-        when(scannerProvider.get()).thenReturn(new VideoFileScanner());
+        when(packageProvider.get()).thenReturn(videoPackage);
+        when(scannerProvider.get()).thenReturn(new VideoFileScanner(packageProvider));
         when(inputSettings.getVideoExtensions()).thenReturn(Arrays.asList("mp4", "mkv"));
     }
 

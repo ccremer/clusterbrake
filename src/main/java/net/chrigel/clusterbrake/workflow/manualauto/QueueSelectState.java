@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 import net.chrigel.clusterbrake.media.FileContainer;
-import net.chrigel.clusterbrake.media.Video;
 import net.chrigel.clusterbrake.media.VideoPackage;
 import net.chrigel.clusterbrake.settings.NodeSettings;
 import net.chrigel.clusterbrake.settings.constraint.Constraint;
@@ -31,7 +30,7 @@ public class QueueSelectState
 
     private List<VideoPackage> videos;
     private List<Constraint> constraints;
-    private final JobSettings queueSettings;
+    private final JobSettings jobSettings;
     private final JobSettings finishedSettings;
     private final NodeSettings nodeSettings;
     private final Provider<Job> jobProvider;
@@ -47,7 +46,7 @@ public class QueueSelectState
             OutputSettings outputSettings
     ) {
         super(context);
-        this.queueSettings = jobSettings;
+        this.jobSettings = jobSettings;
         this.finishedSettings = finishedJobs;
         this.nodeSettings = nodeSettings;
         this.jobProvider = queueProvider;
@@ -63,24 +62,34 @@ public class QueueSelectState
     }
 
     public void clearQueue() {
-        List<Job> queue = queueSettings.getJobs().stream().filter(job -> {
-            return !job.getNodeID().equals(nodeSettings.getNodeID());
-        }).collect(Collectors.toList());
-        queueSettings.setJobs(queue);
+        logger.debug("Clearing jobs...");
+        jobSettings.setJobs(cleanUpQueue(jobSettings.getJobs()));
     }
-    
+
     @Override
     protected void enterState() {
 
         try {
-            List<Job> queue = cleanUpQueue(queueSettings.getJobs());
+            List<Job> queue = cleanUpQueue(jobSettings.getJobs());
             List<Job> finished = finishedSettings.getJobs();
 
             VideoPackage videoPackage = videos.stream()
                     .filter(pkg -> {
+                        return finished.stream().allMatch(job -> {
+                            FileContainer source = job.getVideoPackage().getSourceFile();
+                            boolean found = source.equals(pkg.getSourceFile());
+                            if (found) {
+                                logger.info("Skipping because it is already converted: {}:{}",
+                                        source.getType(),
+                                        source.getFullPath());
+                            }
+                            return !found;
+                        });
+                    })
+                    .filter(pkg -> {
                         return queue.stream().allMatch(job -> {
-                            FileContainer source = job.getVideoPackage().getVideo().getSourceFile();
-                            boolean found = source.equals(pkg.getVideo().getSourceFile());
+                            FileContainer source = job.getVideoPackage().getSourceFile();
+                            boolean found = source.equals(pkg.getSourceFile());
                             if (found) {
                                 logger.info("Skipping because {} is already encoding it: {}",
                                         job.getNodeID(), source.getFullPath());
@@ -88,34 +97,36 @@ public class QueueSelectState
                             return !found;
                         });
                     })
-                    .filter(pkg -> {
-                        return finished.stream().allMatch(job -> {
-                            FileContainer source = job.getVideoPackage().getVideo().getSourceFile();
-                            boolean found = source.equals(pkg.getVideo().getSourceFile());
-                            if (found) {
-                                logger.debug("Skipping because it is already converted: {}", source.getFullPath());
-                            }
-                            return !found;
-                        });
+                    .sorted((o1, o2) -> {
+                        /**
+                         * Put MANUAL input dirs first in line.
+                         */
+                        return Boolean.compare(
+                                !DirTypes.INPUT_MANUAL.equals(o1.getSourceFile().getType()),
+                                !DirTypes.INPUT_MANUAL.equals(o2.getSourceFile().getType()));
                     })
                     .filter(pkg -> {
-                        return constraints.stream().allMatch(constraint -> {
-                            boolean accepted = constraint.accept(pkg.getVideo());
-                            if (!accepted) {
-                                logger.info("Skipping because it has not been accepted by constraint {}: {}",
-                                        constraint, pkg.getVideo().getSourceFile().getFullPath());
-                            }
-                            return accepted;
-                        });
+                        if (constraints == null) {
+                            return true;
+                        } else {
+                            return constraints.stream().allMatch(constraint -> {
+                                boolean accepted = constraint.accept(pkg);
+                                if (!accepted) {
+                                    logger.info("Skipping because it has not been accepted by constraint {}: {}",
+                                            constraint, pkg.getSourceFile().getFullPath());
+                                }
+                                return accepted;
+                            });
+                        }
                     })
                     .findFirst().get();
-            videoPackage.setOutputFile(getOutputFile(videoPackage.getVideo()));
+            videoPackage.setOutputFile(getOutputFile(videoPackage));
 
             Job job = jobProvider.get();
             job.setNodeID(nodeSettings.getNodeID());
             job.setVideoPackage(videoPackage);
             queue.add(job);
-            queueSettings.setJobs(queue);
+            jobSettings.setJobs(queue);
             fireStateTrigger(new QueueResultTrigger(job));
         } catch (NoSuchElementException ex) {
             logger.info("No sources found to queue");
@@ -126,11 +137,11 @@ public class QueueSelectState
 
     private List<Job> cleanUpQueue(List<Job> queues) {
         return queues.stream().filter(queue -> {
-            return !queue.getNodeID().equals(nodeSettings.getNodeID());
+            return !nodeSettings.getNodeID().equals(queue.getNodeID());
         }).collect(Collectors.toList());
     }
 
-    private FileContainer getOutputFile(Video video) {
+    private FileContainer getOutputFile(VideoPackage video) {
         String extension = FilenameUtils.getExtension(video.getSourceFile().getFile().getName());
         String fileName = FilenameUtils.removeExtension(video.getSourceFile().getFile().getName());
         File output = video.getSourceFile().getFile();

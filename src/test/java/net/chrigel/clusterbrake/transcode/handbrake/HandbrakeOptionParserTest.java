@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 import net.chrigel.clusterbrake.TestUtility;
+import net.chrigel.clusterbrake.transcode.SimpleOptionsFileParser;
 import org.apache.commons.io.FileUtils;
 import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.hasItem;
@@ -19,7 +20,7 @@ import org.mockito.MockitoAnnotations;
 
 public class HandbrakeOptionParserTest {
 
-    private final HandbrakeOptionParser subject = new HandbrakeOptionParser();
+    private final SimpleOptionsFileParser subject = new SimpleOptionsFileParser();
 
     private static final File TEST_BASE_DIR = TestUtility.getTestDir();
 

@@ -1,4 +1,4 @@
-package net.chrigel.clusterbrake.transcode.handbrake;
+package net.chrigel.clusterbrake.transcode;
 
 import java.io.File;
 import java.io.IOException;
@@ -11,7 +11,7 @@ import org.apache.commons.io.FileUtils;
 /**
  *
  */
-class HandbrakeOptionParser
+public class SimpleOptionsFileParser
         implements OptionsFileParser {
 
     @Override

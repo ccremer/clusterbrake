@@ -10,7 +10,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import net.chrigel.clusterbrake.TestUtility;
 import net.chrigel.clusterbrake.media.FileContainer;
 import net.chrigel.clusterbrake.media.OptionsFileParser;
-import net.chrigel.clusterbrake.media.Video;
 import net.chrigel.clusterbrake.media.VideoOptionPackage;
 import net.chrigel.clusterbrake.media.VideoPackage;
 import net.chrigel.clusterbrake.statemachine.StateContext;
@@ -40,15 +39,11 @@ public class ManualParseOptionsFileStateTest {
     @Mock
     private Provider<OptionsFileParser> optionParserProvider;
     @Mock
-    private Provider<VideoPackage> videoPackageProvider;
-    @Mock
     private VideoOptionPackage optionPackage;
     @Mock
     private OptionsFileParser parser;
     @Mock
     private VideoPackage videoPackage;
-    @Mock
-    private Video video;
     @Mock
     private TranscoderSettings transcoderSettings;
 
@@ -59,10 +54,9 @@ public class ManualParseOptionsFileStateTest {
         TEST_BASE_DIR.mkdirs();
         DirTypes.TEMPLATE.getBase().mkdirs();
 
-        when(video.getSourceFile()).thenReturn(new FileContainer(DirTypes.INPUT_MANUAL, "test.mkv"));
+        when(videoPackage.getSourceFile()).thenReturn(new FileContainer(DirTypes.INPUT_MANUAL, "test.mkv"));
         when(optionPackageProvider.get()).thenReturn(optionPackage);
         when(optionParserProvider.get()).thenReturn(parser);
-        when(videoPackageProvider.get()).thenReturn(videoPackage);
         when(transcoderSettings.getOptionsFileExtension()).thenReturn("handbrake");
     }
 
@@ -75,7 +69,7 @@ public class ManualParseOptionsFileStateTest {
 
     private ManualParseOptionsFileState createSubject() {
         return new ManualParseOptionsFileState(context, optionPackageProvider,
-                optionParserProvider, videoPackageProvider, transcoderSettings);
+                optionParserProvider, transcoderSettings);
     }
 
     @Test
@@ -93,7 +87,7 @@ public class ManualParseOptionsFileStateTest {
         optionContainer.getFullPath().createNewFile();
 
         List<OptionDirVideoPair> pairList = new LinkedList<>();
-        List<Video> videoList = new LinkedList<>(Arrays.asList(video));
+        List<VideoPackage> videoList = new LinkedList<>(Arrays.asList(videoPackage));
         pairList.add(new OptionDirVideoPair(optionDir, videoList));
 
         subject.setOptionDirList(pairList);
@@ -103,7 +97,6 @@ public class ManualParseOptionsFileStateTest {
         verify(optionPackageProvider).get();
         verify(optionPackage).setOptions(any());
         verify(videoPackage).setSettings(optionPackage);
-        verify(videoPackage).setVideo(video);
         verify(parser).parseFile(optionContainer.getFullPath());
         assertThat(isCalled.get(), equalTo(true));
     }

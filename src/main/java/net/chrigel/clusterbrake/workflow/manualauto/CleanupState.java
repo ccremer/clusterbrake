@@ -49,7 +49,7 @@ public class CleanupState
     protected void enterState() {
 
         List<Job> jobs = jobSettings.getJobs();
-        File source = this.finishedJob.getVideoPackage().getVideo().getSourceFile().getFullPath();
+        File source = this.finishedJob.getVideoPackage().getSourceFile().getFullPath();
         if (cleanupSettings.isSourceDeletionEnabled()) {
             logger.info("Deleting {}", source);
             source.delete();

@@ -1,12 +1,12 @@
 package net.chrigel.clusterbrake.settings.constraint;
 
-import net.chrigel.clusterbrake.media.Video;
+import net.chrigel.clusterbrake.media.VideoPackage;
 
 /**
  *
  */
 public interface Constraint {
     
-    boolean accept(Video video);
+    boolean accept(VideoPackage video);
     
 }

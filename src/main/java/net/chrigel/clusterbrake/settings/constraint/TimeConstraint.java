@@ -4,7 +4,7 @@ import com.google.inject.Inject;
 import com.google.inject.name.Named;
 import java.time.Clock;
 import java.time.LocalTime;
-import net.chrigel.clusterbrake.media.Video;
+import net.chrigel.clusterbrake.media.VideoPackage;
 
 /**
  *
@@ -62,7 +62,7 @@ public class TimeConstraint
     }
 
     @Override
-    public boolean accept(Video video) {
+    public boolean accept(VideoPackage video) {
         if (skipConstraint) {
             return true;
         } else {

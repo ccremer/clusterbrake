@@ -3,12 +3,9 @@ package net.chrigel.clusterbrake.statemachine.states;
 import com.google.inject.Provider;
 import java.io.IOException;
 import java.text.ParseException;
-import java.util.LinkedList;
 import java.util.List;
-import net.chrigel.clusterbrake.media.DirType;
 import net.chrigel.clusterbrake.media.FileContainer;
 import net.chrigel.clusterbrake.media.OptionsFileParser;
-import net.chrigel.clusterbrake.media.Video;
 import net.chrigel.clusterbrake.media.VideoOptionPackage;
 import net.chrigel.clusterbrake.media.VideoPackage;
 import net.chrigel.clusterbrake.statemachine.StateContext;
@@ -21,39 +18,30 @@ public abstract class AbstractOptionParseState
 
     private final Provider<VideoOptionPackage> optionPackageProvider;
     private final Provider<OptionsFileParser> optionParserProvider;
-    private final Provider<VideoPackage> videoPackageProvider;
 
     public AbstractOptionParseState(
             StateContext context,
             Provider<VideoOptionPackage> optionPackageProvider,
-            Provider<OptionsFileParser> optionParserProvider,
-            Provider<VideoPackage> videoPackageProvider
+            Provider<OptionsFileParser> optionParserProvider
     ) {
         super(context);
         this.optionPackageProvider = optionPackageProvider;
         this.optionParserProvider = optionParserProvider;
-        this.videoPackageProvider = videoPackageProvider;
     }
 
-    protected List<VideoPackage> applyOptionsTemplate(FileContainer template, DirType inputDirType,
-            List<Video> videoList)
+    protected List<VideoPackage> applyOptionsTemplate(FileContainer template, List<VideoPackage> videoList)
             throws IOException, ParseException {
 
-        List<VideoPackage> pkgList = new LinkedList<>();
         logger.info("Parsing {}", template.getFullPath());
         List<String> options = optionParserProvider
                 .get()
                 .parseFile(template.getFullPath());
         videoList.parallelStream().forEach(video -> {
-            VideoPackage videoPkg = videoPackageProvider.get();
             VideoOptionPackage optionPkg = optionPackageProvider.get();
             optionPkg.setOptions(options);
-            videoPkg.setSettings(optionPkg);
-            videoPkg.setVideo(video);
-            video.getSourceFile().setDirType(inputDirType);
-            pkgList.add(videoPkg);
+            video.setSettings(optionPkg);
         });
-        return pkgList;
+        return videoList;
     }
 
 }

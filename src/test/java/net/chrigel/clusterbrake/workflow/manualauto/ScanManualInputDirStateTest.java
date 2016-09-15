@@ -7,7 +7,7 @@ import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicBoolean;
 import net.chrigel.clusterbrake.TestUtility;
 import net.chrigel.clusterbrake.media.FileScanner;
-import net.chrigel.clusterbrake.media.Video;
+import net.chrigel.clusterbrake.media.VideoPackage;
 import net.chrigel.clusterbrake.media.impl.VideoFileScanner;
 import net.chrigel.clusterbrake.statemachine.StateContext;
 import net.chrigel.clusterbrake.statemachine.trigger.GenericCollectionTrigger;
@@ -30,12 +30,16 @@ public class ScanManualInputDirStateTest {
 
     @Mock
     private StateContext context;
-
     @Mock
     private InputSettings inputSettings;
-
     @Mock
-    private Provider<FileScanner<Video>> scannerProvider;
+    private Provider<FileScanner<VideoPackage>> scannerProvider;
+    @Mock
+    private Provider<VideoPackage> packageProvider;
+    @Mock
+    private VideoPackage videoPackage1;
+    @Mock
+    private VideoPackage videoPackage2;
 
     private ScanManualInputDirState subject;
 
@@ -44,8 +48,11 @@ public class ScanManualInputDirStateTest {
         TestUtility.initDirs();
         DirTypes.INPUT_MANUAL.getBase().mkdirs();
         MockitoAnnotations.initMocks(this);
-        when(scannerProvider.get()).thenReturn(new VideoFileScanner());
+        when(scannerProvider.get()).thenReturn(new VideoFileScanner(packageProvider));
         when(inputSettings.getVideoExtensions()).thenReturn(Arrays.asList("mp4", "mkv"));
+        when(packageProvider.get()).thenReturn(videoPackage1, videoPackage2);
+
+        subject = createSubject();
     }
 
     @After
@@ -58,9 +65,7 @@ public class ScanManualInputDirStateTest {
     }
 
     @Test
-    public void testEnterState_ShouldFindFiles() throws IOException {
-        subject = createSubject();
-
+    public void testEnterState_ShouldFindAllFiles() throws IOException {
         File level1File = new File(DirTypes.INPUT_MANUAL.getBase(), "video1.mp4");
         File level2File = new File(DirTypes.INPUT_MANUAL.getBase(), "template1/video2.mkv");
         File level3File = new File(DirTypes.INPUT_MANUAL.getBase(), "template2/subdir/video3.mp4");
@@ -84,8 +89,6 @@ public class ScanManualInputDirStateTest {
 
     @Test
     public void testEnterState_ShouldTriggerNoResult() throws IOException {
-        subject = createSubject();
-
         File level1File = new File(DirTypes.INPUT_MANUAL.getBase(), "ignored.mp4");
         File level2File = new File(DirTypes.INPUT_MANUAL.getBase(), "template1/video2.nfo");
         File level3File = new File(DirTypes.INPUT_MANUAL.getBase(), "template2/subdir/video3.srt");

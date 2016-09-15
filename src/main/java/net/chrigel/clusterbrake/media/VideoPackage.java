@@ -5,10 +5,10 @@ package net.chrigel.clusterbrake.media;
  */
 public interface VideoPackage {
 
-    Video getVideo();
-
-    void setVideo(Video video);
+    FileContainer getSourceFile();
     
+    void setSourceFile(FileContainer source);
+
     FileContainer getOutputFile();
 
     void setOutputFile(FileContainer file);

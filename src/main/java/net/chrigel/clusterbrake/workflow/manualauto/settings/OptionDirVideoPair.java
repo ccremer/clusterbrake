@@ -2,7 +2,7 @@ package net.chrigel.clusterbrake.workflow.manualauto.settings;
 
 import java.io.File;
 import java.util.List;
-import net.chrigel.clusterbrake.media.Video;
+import net.chrigel.clusterbrake.media.VideoPackage;
 
 /**
  *
@@ -10,9 +10,9 @@ import net.chrigel.clusterbrake.media.Video;
 public class OptionDirVideoPair {
 
     private final File optionDir;
-    private final List<Video> list;
+    private final List<VideoPackage> list;
 
-    public OptionDirVideoPair(File optionDir, List<Video> list) {
+    public OptionDirVideoPair(File optionDir, List<VideoPackage> list) {
         this.optionDir = optionDir;
         this.list = list;
     }
@@ -21,7 +21,7 @@ public class OptionDirVideoPair {
         return optionDir;
     }
 
-    public List<Video> getVideoList() {
+    public List<VideoPackage> getVideoList() {
         return list;
     }
 

@@ -1,4 +1,4 @@
-package net.chrigel.clusterbrake.transcode.handbrake;
+package net.chrigel.clusterbrake.transcode;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -7,7 +7,7 @@ import net.chrigel.clusterbrake.media.VideoOptionPackage;
 /**
  *
  */
-class HandbrakeOptionPackage
+public class SimpleOptionPackage
         implements VideoOptionPackage {
 
     private List<String> options = new LinkedList<>();

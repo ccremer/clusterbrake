@@ -3,7 +3,7 @@ package net.chrigel.clusterbrake.settings.constraint;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 import java.io.File;
-import net.chrigel.clusterbrake.media.Video;
+import net.chrigel.clusterbrake.media.VideoPackage;
 
 /**
  *
@@ -35,7 +35,7 @@ public class FileSizeConstraint
     }
 
     @Override
-    public boolean accept(Video video) {
+    public boolean accept(VideoPackage video) {
         if (minSize <= 0 && maxSize <= 0) {
             return true;
         }

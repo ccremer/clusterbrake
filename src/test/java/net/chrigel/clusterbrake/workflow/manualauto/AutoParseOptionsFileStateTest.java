@@ -9,7 +9,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import net.chrigel.clusterbrake.TestUtility;
 import net.chrigel.clusterbrake.media.FileContainer;
 import net.chrigel.clusterbrake.media.OptionsFileParser;
-import net.chrigel.clusterbrake.media.Video;
 import net.chrigel.clusterbrake.media.VideoOptionPackage;
 import net.chrigel.clusterbrake.media.VideoPackage;
 import net.chrigel.clusterbrake.statemachine.StateContext;
@@ -39,15 +38,11 @@ public class AutoParseOptionsFileStateTest {
     @Mock
     private Provider<OptionsFileParser> optionParserProvider;
     @Mock
-    private Provider<VideoPackage> videoPackageProvider;
-    @Mock
     private VideoOptionPackage optionPackage;
     @Mock
     private OptionsFileParser parser;
     @Mock
     private VideoPackage videoPackage;
-    @Mock
-    private Video video;
     @Mock
     private TranscoderSettings transcoderSettings;
     @Mock
@@ -62,10 +57,9 @@ public class AutoParseOptionsFileStateTest {
         DirTypes.TEMPLATE.setDir(TestUtility.getTestDir());
         DirTypes.TEMPLATE.getBase().mkdirs();
         
-        when(video.getSourceFile()).thenReturn(new FileContainer(DirTypes.INPUT_MANUAL, "test.mkv"));
+        when(videoPackage.getSourceFile()).thenReturn(new FileContainer(DirTypes.INPUT_MANUAL, "test.mkv"));
         when(optionPackageProvider.get()).thenReturn(optionPackage);
         when(optionParserProvider.get()).thenReturn(parser);
-        when(videoPackageProvider.get()).thenReturn(videoPackage);
         when(transcoderSettings.getOptionsFileExtension()).thenReturn("handbrake");
         when(templateSettings.getDefaultAutoTemplate()).thenReturn("auto");
     }
@@ -79,7 +73,7 @@ public class AutoParseOptionsFileStateTest {
 
     private AutoParseOptionsFileState createSubject() {
         return new AutoParseOptionsFileState(context, templateSettings, optionPackageProvider,
-                optionParserProvider, videoPackageProvider, transcoderSettings);
+                optionParserProvider, transcoderSettings);
     }
 
     @Test
@@ -91,8 +85,8 @@ public class AutoParseOptionsFileStateTest {
         });
         FileContainer optionContainer = new FileContainer(TestUtility.getTestDirType(), "auto.handbrake");
 
-        List<Video> videoList = new LinkedList<>();
-        videoList.add(video);
+        List<VideoPackage> videoList = new LinkedList<>();
+        videoList.add(videoPackage);
         optionContainer.getFullPath().createNewFile();
         subject.setVideoList(videoList);
         subject.enter();
@@ -101,7 +95,6 @@ public class AutoParseOptionsFileStateTest {
         verify(optionPackageProvider).get();
         verify(optionPackage).setOptions(any());
         verify(videoPackage).setSettings(optionPackage);
-        verify(videoPackage).setVideo(video);
         verify(parser).parseFile(optionContainer.getFullPath());
         assertThat(isCalled.get(), equalTo(true));
     }

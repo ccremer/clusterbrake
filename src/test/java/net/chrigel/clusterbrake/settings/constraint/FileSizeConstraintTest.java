@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import net.chrigel.clusterbrake.TestUtility;
 import net.chrigel.clusterbrake.media.FileContainer;
-import net.chrigel.clusterbrake.media.Video;
+import net.chrigel.clusterbrake.media.VideoPackage;
 import org.apache.commons.io.FileUtils;
 import static org.hamcrest.CoreMatchers.equalTo;
 import org.junit.AfterClass;
@@ -22,7 +22,7 @@ public class FileSizeConstraintTest {
     private FileSizeConstraint subject;
 
     @Mock
-    private Video video;
+    private VideoPackage video;
 
     @Before
     public void setup() {
