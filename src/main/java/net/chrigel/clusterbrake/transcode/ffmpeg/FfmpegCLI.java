@@ -115,10 +115,10 @@ public class FfmpegCLI
     private List<String> addOptionsToArguments(List<String> options) {
         List<String> list = new LinkedList<>();
         options.forEach(arg -> {
-            if (arg.contains("${INPUT}")) {
-                arg = arg.replace("${INPUT}", source.getAbsolutePath());
-            }
             if (arg.contains(" ")) {
+                if (arg.contains("${INPUT}")) {
+                    arg = arg.replace("${INPUT}", source.getAbsolutePath());
+                }
                 list.addAll(Arrays.asList(arg.split(" ", 2)));
             } else {
                 list.add(arg);
