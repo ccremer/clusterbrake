@@ -1,8 +1,8 @@
 package net.chrigel.clusterbrake.statemachine.states;
 
-import javafx.util.Callback;
 import net.chrigel.clusterbrake.statemachine.State;
 import net.chrigel.clusterbrake.statemachine.Trigger;
+import net.chrigel.clusterbrake.util.Callback;
 
 /**
  *

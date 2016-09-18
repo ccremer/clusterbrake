@@ -3,6 +3,8 @@ package net.chrigel.clusterbrake.workflow.manualauto;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import java.io.File;
+import java.time.Clock;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -81,7 +83,7 @@ public class QueueSelectState
                             if (found) {
                                 logger.info("Skipping because it is already converted: {}:{}",
                                         source.getType(),
-                                        source.getFullPath());
+                                        source.getFile());
                             }
                             return !found;
                         });
@@ -120,11 +122,13 @@ public class QueueSelectState
                         }
                     })
                     .findFirst().get();
+            logger.info("Selected job: {}", videoPackage.getSourceFile().getFullPath());
             videoPackage.setOutputFile(getOutputFile(videoPackage));
 
             Job job = jobProvider.get();
             job.setNodeID(nodeSettings.getNodeID());
             job.setVideoPackage(videoPackage);
+            job.setStartTime(LocalDateTime.now(Clock.systemDefaultZone()));
             queue.add(job);
             jobSettings.setJobs(queue);
             fireStateTrigger(new QueueResultTrigger(job));

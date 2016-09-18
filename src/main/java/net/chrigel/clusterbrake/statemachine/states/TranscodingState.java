@@ -37,7 +37,6 @@ public class TranscodingState
     @Override
     protected void enterState() {
         try {
-            job.setStartTime(LocalDateTime.now(Clock.systemDefaultZone()));
             job.getVideoPackage().getOutputFile().getFullPath().getParentFile().mkdirs();
             currentTranscoder = transcoderProvider.get();
             logger.info("Beginning transcode...");
