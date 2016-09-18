@@ -94,10 +94,7 @@ public class FfmpegCLI
     private void validateArguments(List<String> arguments) {
         logger.debug("Validating arguments...");
         arguments.forEach(arg -> {
-            if (arg.startsWith("-i")) {
-                throw new IllegalArgumentException("Input is specified in arguments");
-            }
-            if (arg.startsWith("--help") || arg.startsWith("-h") || arg.startsWith("-?") || arg.startsWith("-help")) {
+            if (arg.startsWith("--help") || arg.equals("-h ") || arg.equals("-?") || arg.equals("-help")) {
                 throw new IllegalArgumentException("Help option is specified in arguments");
             }
             if (arg.startsWith("-version")) {
