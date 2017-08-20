@@ -1,7 +1,7 @@
 # clusterbrake
 A project which uses Handbrake to automatically transcode video files in a cluster.
 
-So this is a little project which I'll use to automatically transcode my movies and tv shows into other formats and to save disk space.
+### This project is abandoned and superseded by [clustercode](https://github.com/BrainDoctor/clustercode)
 
 ## Who is it for
 Well, 
@@ -27,8 +27,7 @@ It picks video files from a watch folder and transcodes them into a new format b
   * File size: If a video is very big, a Raspberry Pi might take a very long time. Leave the job for another server with more processing power.
 
 # Project status
-This project has been developed to work and is working in my personal environment, but it is currently under critical maintenance only (2016-09-15).
-If you encounter a bug, open an issue, but I won't promise a fix.
+This project is abandoned and superseded by [clustercode](https://github.com/BrainDoctor/clustercode). No bugfixes, updates whatsoever will happen to clusterbrake, at least from my side.
 
 # How exactly does it work?
 Head over to the wiki and see the default workflow for yourself.
